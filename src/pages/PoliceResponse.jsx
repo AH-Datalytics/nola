@@ -256,7 +256,7 @@ export default function PoliceResponse() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Long-term trend */}
         <ChartCard
-          title="Long-Term Trend"
+          title="Median Response Time (Minutes)"
           subtitle="Full history since 2015"
         >
           <ResponsiveContainer width="100%" height={280}>
@@ -273,17 +273,19 @@ export default function PoliceResponse() {
               />
               <YAxis
                 tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={40}
+                width={45}
                 domain={[0, 'auto']}
+                label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#6B7280' } }}
               />
               <Tooltip
                 {...tooltipStyle}
-                formatter={(value) => [`${value} min`, 'Median']}
+                formatter={(value) => [`${value} min`, 'Median Response Time']}
                 labelFormatter={formatMonth}
               />
               <Line
                 type="monotone"
                 dataKey="median"
+                name="Median Response Time"
                 stroke={COLORS.navy}
                 strokeWidth={1.5}
                 dot={false}
