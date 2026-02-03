@@ -331,10 +331,10 @@ export default function ThreeOneOne() {
                 dataKey="count"
                 nameKey="status"
                 cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label={({ status, percent }) => `${status} (${(percent * 100).toFixed(0)}%)`}
-                labelLine={true}
+                cy="45%"
+                outerRadius={70}
+                label={({ status, percent }) => `${(percent * 100).toFixed(0)}%`}
+                labelLine={false}
               >
                 {data.statusBreakdown.map((entry, index) => (
                   <Cell
@@ -346,6 +346,11 @@ export default function ThreeOneOne() {
               <Tooltip
                 {...tooltipStyle}
                 formatter={(value) => [formatNumber(value), 'Requests']}
+              />
+              <Legend
+                verticalAlign="bottom"
+                height={36}
+                formatter={(value) => <span className="text-xs">{value}</span>}
               />
             </PieChart>
           </ResponsiveContainer>
