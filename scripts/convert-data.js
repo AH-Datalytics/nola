@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -175,156 +174,91 @@ if (existsSync(incomePath)) {
   console.log('   ⚠ Median household income file not found');
 }
 
-// Convert Parquet file using Python
-console.log('📊 Processing police response time data (parquet)...');
-const parquetPath = path.join(rootDir, 'Call_For_Service_Response_Time.parquet');
+// Convert Response Time CSV
+console.log('📊 Processing police response time data (CSV)...');
+const responseTimeCsvPath = path.join(rootDir, 'Response Time in Minutes.csv');
 const responseTimeOutputPath = path.join(dataDir, 'response-times.json');
 
-if (existsSync(parquetPath) && !existsSync(responseTimeOutputPath)) {
-  const pythonScript = `
-import pyarrow.parquet as pq
-import pandas as pd
-import json
-from datetime import datetime
-import numpy as np
+if (existsSync(responseTimeCsvPath)) {
+  const csvContent = readFileSync(responseTimeCsvPath, 'utf-8');
+  const lines = csvContent.trim().split('\n');
 
-print('   Loading parquet file...')
-df = pq.read_table('${parquetPath.replace(/\\/g, '\\\\')}').to_pandas()
-print(f'   Loaded {len(df)} records')
+  const monthMap = {
+    'January': '01', 'February': '02', 'March': '03', 'April': '04',
+    'May': '05', 'June': '06', 'July': '07', 'August': '08',
+    'September': '09', 'October': '10', 'November': '11', 'December': '12'
+  };
 
-# Parse dates - handle both formats
-def parse_date(d):
-    if pd.isna(d) or d is None or d == 'None':
-        return None
-    try:
-        # Try MM/DD/YYYY format first
-        if '/' in str(d):
-            return pd.to_datetime(d, format='%m/%d/%Y %I:%M:%S %p')
-        else:
-            return pd.to_datetime(d)
-    except:
-        return None
+  // Parse daily data
+  const dailyData = lines.slice(1).map(line => {
+    const parts = line.split(',');
+    const year = parts[0];
+    const month = monthMap[parts[1]];
+    const day = parts[2];
+    const responseTime = parseFloat(parts[3]) || null;
+    const incidents = parseInt(parts[4]) || 0;
+    return {
+      date: `${year}-${month}-${day.padStart(2, '0')}`,
+      month: `${year}-${month}`,
+      responseTime,
+      incidents
+    };
+  }).filter(d => d.responseTime !== null && d.month >= '2015-01');
 
-print('   Parsing dates...')
-df['TimeCreate_dt'] = df['TimeCreate'].apply(parse_date)
-df['TimeArrive_dt'] = df['TimeArrive'].apply(parse_date)
-df['TimeDispatch_dt'] = df['TimeDispatch'].apply(parse_date)
-
-# Filter to 2015+
-df = df[df['TimeCreate_dt'] >= '2015-01-01']
-print(f'   Filtered to {len(df)} records from 2015+')
-
-# Calculate response time in minutes (from dispatch to arrival)
-df['response_minutes'] = (df['TimeArrive_dt'] - df['TimeDispatch_dt']).dt.total_seconds() / 60
-# Also calculate total time from call creation to arrival
-df['total_minutes'] = (df['TimeArrive_dt'] - df['TimeCreate_dt']).dt.total_seconds() / 60
-
-# Remove invalid response times
-df = df[(df['response_minutes'] > 0) & (df['response_minutes'] < 180)]  # 0-3 hours reasonable
-print(f'   {len(df)} records with valid response times')
-
-# Add month column
-df['month'] = df['TimeCreate_dt'].dt.to_period('M').astype(str)
-
-# Determine priority category (Emergency = 0 or 1 prefixed, Non-emergency = 2 prefixed)
-df['is_emergency'] = df['Priority'].str.startswith(('0', '1'), na=False)
-
-# Aggregate by month
-print('   Aggregating by month...')
-monthly = df.groupby('month').agg({
-    'response_minutes': ['median', 'mean', lambda x: x.quantile(0.9), 'count'],
-    'total_minutes': 'median'
-}).reset_index()
-monthly.columns = ['month', 'median_response', 'mean_response', 'p90_response', 'call_count', 'median_total']
-
-# Emergency vs non-emergency monthly (with median, mean, p90)
-emergency_monthly = df[df['is_emergency']].groupby('month').agg({
-    'response_minutes': ['median', 'mean', lambda x: x.quantile(0.9)]
-}).reset_index()
-emergency_monthly.columns = ['month', 'emergency_median', 'emergency_mean', 'emergency_p90']
-
-non_emergency_monthly = df[~df['is_emergency']].groupby('month').agg({
-    'response_minutes': ['median', 'mean', lambda x: x.quantile(0.9)]
-}).reset_index()
-non_emergency_monthly.columns = ['month', 'non_emergency_median', 'non_emergency_mean', 'non_emergency_p90']
-
-monthly = monthly.merge(emergency_monthly, on='month', how='left')
-monthly = monthly.merge(non_emergency_monthly, on='month', how='left')
-
-# By district
-print('   Aggregating by district...')
-by_district = df.groupby('District').agg({
-    'response_minutes': ['median', 'count']
-}).reset_index()
-by_district.columns = ['district', 'median_response', 'call_count']
-by_district = by_district[by_district['district'] > 0]  # Remove district 0
-
-# By call type (top 15)
-print('   Aggregating by call type...')
-by_type = df.groupby('TypeText').agg({
-    'response_minutes': ['median', 'count']
-}).reset_index()
-by_type.columns = ['type', 'median_response', 'call_count']
-by_type = by_type.sort_values('call_count', ascending=False).head(15)
-
-# Distribution buckets
-print('   Computing response time distribution...')
-bins = [0, 5, 10, 15, 20, 30, 45, 60, 120, 180]
-labels = ['0-5', '5-10', '10-15', '15-20', '20-30', '30-45', '45-60', '60-120', '120+']
-df['time_bucket'] = pd.cut(df['response_minutes'], bins=bins, labels=labels, right=False)
-distribution = df['time_bucket'].value_counts().sort_index()
-distribution_data = [{'bucket': str(k), 'count': int(v)} for k, v in distribution.items()]
-
-# Priority breakdown
-by_priority = df.groupby('Priority').agg({
-    'response_minutes': ['median', 'count']
-}).reset_index()
-by_priority.columns = ['priority', 'median_response', 'call_count']
-by_priority = by_priority.sort_values('call_count', ascending=False).head(10)
-
-result = {
-    'monthly': monthly.replace({np.nan: None}).to_dict('records'),
-    'byDistrict': by_district.replace({np.nan: None}).to_dict('records'),
-    'byType': by_type.replace({np.nan: None}).to_dict('records'),
-    'distribution': distribution_data,
-    'byPriority': by_priority.replace({np.nan: None}).to_dict('records'),
-    'summary': {
-        'totalCalls': int(len(df)),
-        'overallMedian': float(df['response_minutes'].median()),
-        'emergencyMedian': float(df[df['is_emergency']]['response_minutes'].median()),
-        'latestMonth': monthly['month'].max(),
-        'latestMedian': float(monthly[monthly['month'] == monthly['month'].max()]['median_response'].values[0])
+  // Aggregate to monthly (weighted average by incidents)
+  const monthlyMap = {};
+  dailyData.forEach(d => {
+    if (!monthlyMap[d.month]) {
+      monthlyMap[d.month] = { totalWeighted: 0, totalIncidents: 0, responseTimes: [] };
     }
-}
+    monthlyMap[d.month].totalWeighted += d.responseTime * d.incidents;
+    monthlyMap[d.month].totalIncidents += d.incidents;
+    monthlyMap[d.month].responseTimes.push(d.responseTime);
+  });
 
-print('   Writing JSON output...')
-with open('${responseTimeOutputPath.replace(/\\/g, '\\\\')}', 'w') as f:
-    json.dump(result, f, indent=2)
+  const monthly = Object.entries(monthlyMap)
+    .map(([month, data]) => {
+      const sorted = [...data.responseTimes].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      const mean = data.totalWeighted / data.totalIncidents;
+      const p90Index = Math.floor(sorted.length * 0.9);
+      const p90 = sorted[p90Index] || sorted[sorted.length - 1];
 
-print('   ✓ Response time data processed successfully')
-`;
+      return {
+        month,
+        median_response: parseFloat(median.toFixed(2)),
+        mean_response: parseFloat(mean.toFixed(2)),
+        p90_response: parseFloat(p90.toFixed(2)),
+        call_count: data.totalIncidents
+      };
+    })
+    .sort((a, b) => a.month.localeCompare(b.month));
 
-  try {
-    execSync(`python3 -c "${pythonScript.replace(/"/g, '\\"')}"`, {
-      stdio: 'inherit',
-      maxBuffer: 1024 * 1024 * 100
-    });
-  } catch (error) {
-    console.error('   ⚠ Error processing parquet file:', error.message);
-    // Write placeholder data if parquet processing fails
-    writeFileSync(responseTimeOutputPath, JSON.stringify({
-      monthly: [],
-      byDistrict: [],
-      byType: [],
-      distribution: [],
-      byPriority: [],
-      summary: { totalCalls: 0, overallMedian: 0, emergencyMedian: 0, latestMonth: '', latestMedian: 0 }
-    }, null, 2));
-  }
-} else if (existsSync(responseTimeOutputPath)) {
-  console.log('   ✓ Response time data already exists, skipping');
+  // Calculate overall stats
+  const totalIncidents = monthly.reduce((sum, m) => sum + m.call_count, 0);
+  const latestMonth = monthly[monthly.length - 1];
+  const allResponseTimes = dailyData.map(d => d.responseTime);
+  const sortedAll = [...allResponseTimes].sort((a, b) => a - b);
+  const overallMedian = sortedAll[Math.floor(sortedAll.length / 2)];
+
+  const result = {
+    monthly,
+    byDistrict: [],  // Not available in this dataset
+    byType: [],      // Not available in this dataset
+    distribution: [], // Not available in this dataset
+    byPriority: [],  // Not available in this dataset
+    summary: {
+      totalCalls: totalIncidents,
+      overallMedian: parseFloat(overallMedian.toFixed(2)),
+      latestMonth: latestMonth?.month,
+      latestMedian: latestMonth?.median_response
+    }
+  };
+
+  writeFileSync(responseTimeOutputPath, JSON.stringify(result, null, 2));
+  console.log(`   ✓ Processed ${monthly.length} months of response time data (${totalIncidents.toLocaleString()} total incidents)`);
 } else {
-  console.log('   ⚠ Parquet file not found');
+  console.log('   ⚠ Response time CSV not found');
 }
 
 console.log('✅ Data conversion complete!');

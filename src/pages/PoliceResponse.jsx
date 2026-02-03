@@ -10,18 +10,17 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  Cell,
 } from 'recharts';
-import { Timer, AlertTriangle, MapPin, Phone, TrendingDown, Clock } from 'lucide-react';
+import { Timer, TrendingUp, TrendingDown, Phone, Clock, Calendar } from 'lucide-react';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
-import { COLORS, CHART_COLORS, tooltipStyle, formatMonth, formatMinutes, formatNumber } from '../utils/chartConfig';
+import { COLORS, tooltipStyle, formatMonth, formatNumber } from '../utils/chartConfig';
 
 import responseData from '../data/response-times.json';
 
 export default function PoliceResponse() {
-  const { monthly, byDistrict, byType, distribution, byPriority, summary } = responseData;
+  const { monthly, summary } = responseData;
   const [metricType, setMetricType] = useState('median'); // 'median', 'mean', 'p90'
 
   // Calculate trends
@@ -44,34 +43,27 @@ export default function PoliceResponse() {
       ? ((latestMonth.median_response - yearAgoMonth.median_response) / yearAgoMonth.median_response) * 100
       : 0;
 
+    // Calculate averages
+    const last12 = monthly.slice(-12);
+    const avg12Month = last12.reduce((sum, m) => sum + m.median_response, 0) / last12.length;
+
+    // Find best and worst months in last 12
+    const best = last12.reduce((min, m) => m.median_response < min.median_response ? m : min, last12[0]);
+    const worst = last12.reduce((max, m) => m.median_response > max.median_response ? m : max, last12[0]);
+
     return {
       latestMedian: latestMonth?.median_response,
-      emergencyMedian: latestMonth?.emergency_median,
+      latestMean: latestMonth?.mean_response,
+      latestP90: latestMonth?.p90_response,
+      latestMonth: latestMonth?.month,
       monthlyChange,
       yearlyChange,
       totalCalls: summary?.totalCalls || 0,
+      avg12Month,
+      bestMonth: best,
+      worstMonth: worst,
     };
   }, [monthly, summary]);
-
-  // Last 24 months for charts
-  const trendData = useMemo(() => {
-    return (monthly || []).slice(-24).map(d => ({
-      month: d.month,
-      median: d.median_response?.toFixed(1),
-      mean: d.mean_response?.toFixed(1),
-      p90: d.p90_response?.toFixed(1),
-      emergencyMedian: d.emergency_median?.toFixed(1),
-      emergencyMean: d.emergency_mean?.toFixed(1),
-      emergencyP90: d.emergency_p90?.toFixed(1),
-      nonEmergencyMedian: d.non_emergency_median?.toFixed(1),
-      nonEmergencyMean: d.non_emergency_mean?.toFixed(1),
-      nonEmergencyP90: d.non_emergency_p90?.toFixed(1),
-    }));
-  }, [monthly]);
-
-  // Get the emergency/non-emergency dataKeys based on selected metric
-  const emergencyKey = metricType === 'median' ? 'emergencyMedian' : metricType === 'mean' ? 'emergencyMean' : 'emergencyP90';
-  const nonEmergencyKey = metricType === 'median' ? 'nonEmergencyMedian' : metricType === 'mean' ? 'nonEmergencyMean' : 'nonEmergencyP90';
 
   // Get the current metric label for display
   const metricLabels = {
@@ -80,57 +72,59 @@ export default function PoliceResponse() {
     p90: '90th Percentile',
   };
 
-  // District data for bar chart
-  const districtData = useMemo(() => {
-    return (byDistrict || [])
-      .filter(d => d.district > 0)
-      .sort((a, b) => a.district - b.district)
-      .map(d => ({
-        district: `District ${d.district}`,
-        median: d.median_response?.toFixed(1),
-        calls: d.call_count,
-      }));
-  }, [byDistrict]);
-
-  // Call type data
-  const typeData = useMemo(() => {
-    return (byType || []).slice(0, 10).map(d => ({
-      type: d.type,
-      median: d.median_response?.toFixed(1),
+  // Last 24 months for main chart
+  const trendData = useMemo(() => {
+    return (monthly || []).slice(-24).map(d => ({
+      month: d.month,
+      median: parseFloat(d.median_response?.toFixed(1)),
+      mean: parseFloat(d.mean_response?.toFixed(1)),
+      p90: parseFloat(d.p90_response?.toFixed(1)),
       calls: d.call_count,
     }));
-  }, [byType]);
+  }, [monthly]);
 
-  // Distribution data
-  const distributionData = useMemo(() => {
-    return (distribution || []).map(d => ({
-      bucket: d.bucket,
-      count: d.count,
+  // Full history for long-term chart
+  const fullHistory = useMemo(() => {
+    return (monthly || []).map(d => ({
+      month: d.month,
+      median: parseFloat(d.median_response?.toFixed(1)),
+      mean: parseFloat(d.mean_response?.toFixed(1)),
+      p90: parseFloat(d.p90_response?.toFixed(1)),
     }));
-  }, [distribution]);
+  }, [monthly]);
+
+  // Monthly incidents chart data
+  const incidentsData = useMemo(() => {
+    return (monthly || []).slice(-24).map(d => ({
+      month: d.month,
+      calls: d.call_count,
+    }));
+  }, [monthly]);
+
+  // Table data - monthly breakdown
+  const tableData = useMemo(() => {
+    return (monthly || []).slice(-12).reverse().map(d => ({
+      month: formatMonth(d.month),
+      median: `${d.median_response?.toFixed(1)} min`,
+      mean: `${d.mean_response?.toFixed(1)} min`,
+      p90: `${d.p90_response?.toFixed(1)} min`,
+      calls: d.call_count,
+    }));
+  }, [monthly]);
 
   const tableColumns = [
-    { key: 'type', header: 'Call Type' },
-    { key: 'median', header: 'Median (min)', align: 'right' },
-    {
-      key: 'calls',
-      header: 'Total Calls',
-      align: 'right',
-      render: (val) => formatNumber(val)
-    },
-  ];
-
-  const districtTableColumns = [
-    { key: 'district', header: 'District' },
-    { key: 'median', header: 'Median Response', align: 'right', render: (val) => `${val} min` },
-    { key: 'calls', header: 'Total Calls', align: 'right', render: (val) => formatNumber(val) },
+    { key: 'month', header: 'Month' },
+    { key: 'median', header: 'Median', align: 'right' },
+    { key: 'mean', header: 'Average', align: 'right' },
+    { key: 'p90', header: '90th %ile', align: 'right' },
+    { key: 'calls', header: 'Incidents', align: 'right', render: (val) => formatNumber(val) },
   ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Police Response Times</h1>
-        <p className="text-gray-500 mt-1 text-sm lg:text-base">Call for service response analysis (dispatch to arrival)</p>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Daily average response time analysis</p>
       </div>
 
       {/* Context banner */}
@@ -138,11 +132,11 @@ export default function PoliceResponse() {
         <TrendingDown className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm text-teal-800 font-medium">
-            NOPD reported significant improvements in response times
+            Response time tracking since 2015
           </p>
           <p className="text-sm text-teal-700 mt-1">
-            The department has focused on reducing dispatch-to-arrival times as a key performance metric.
-            Data below shows median response times across {formatNumber(stats.totalCalls)} calls since 2015.
+            Data shows daily average response times across {formatNumber(stats.totalCalls)} total incidents.
+            Use the toggle to view median, average, or 90th percentile response times.
           </p>
         </div>
       </div>
@@ -152,28 +146,28 @@ export default function PoliceResponse() {
         <KPICard
           title="Current Median Response"
           value={`${stats.latestMedian?.toFixed(1) || '-'} min`}
-          subtitle="Latest month, all calls"
+          subtitle={formatMonth(stats.latestMonth)}
           trend={stats.monthlyChange}
           trendLabel="vs previous month"
           icon={Timer}
           color="navy"
         />
         <KPICard
-          title="Emergency Response"
-          value={`${stats.emergencyMedian?.toFixed(1) || '-'} min`}
-          subtitle="Priority 0-1 calls"
-          icon={AlertTriangle}
-          color="coral"
-        />
-        <KPICard
           title="Year-over-Year Change"
           value={`${stats.yearlyChange > 0 ? '+' : ''}${stats.yearlyChange?.toFixed(1) || 0}%`}
           subtitle="Same month comparison"
-          icon={Clock}
+          icon={stats.yearlyChange < 0 ? TrendingDown : TrendingUp}
           color={stats.yearlyChange < 0 ? 'teal' : 'coral'}
         />
         <KPICard
-          title="Total Calls Analyzed"
+          title="12-Month Average"
+          value={`${stats.avg12Month?.toFixed(1) || '-'} min`}
+          subtitle="Rolling median average"
+          icon={Clock}
+          color="navy"
+        />
+        <KPICard
+          title="Total Incidents"
           value={formatNumber(stats.totalCalls)}
           subtitle="Since 2015"
           icon={Phone}
@@ -187,7 +181,7 @@ export default function PoliceResponse() {
           <div>
             <h3 className="font-semibold text-navy-900 text-sm lg:text-base">Response Time Trend</h3>
             <p className="text-xs lg:text-sm text-gray-500 mt-0.5">
-              {metricLabels[metricType]} minutes by priority level, 24-month view
+              {metricLabels[metricType]} minutes, 24-month view
             </p>
           </div>
           <div className="flex bg-warm-gray-100 rounded-lg p-1 self-start sm:self-auto">
@@ -224,150 +218,120 @@ export default function PoliceResponse() {
           </div>
         </div>
         <div className="p-3 lg:p-6">
-        <ResponsiveContainer width="100%" height={320}>
-          <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
-            <XAxis
-              dataKey="month"
-              tickFormatter={formatMonth}
-              tick={{ fontSize: 11, fill: '#6B7280' }}
-              interval="preserveStartEnd"
-            />
-            <YAxis
-              tick={{ fontSize: 11, fill: '#6B7280' }}
-              width={45}
-              domain={[0, 'auto']}
-              label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#6B7280' } }}
-            />
-            <Tooltip
-              {...tooltipStyle}
-              formatter={(value, name) => [`${value} min`, name]}
-              labelFormatter={formatMonth}
-            />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey={metricType}
-              name={`All Calls (${metricLabels[metricType]})`}
-              stroke={COLORS.navy}
-              strokeWidth={2.5}
-              dot={false}
-              activeDot={{ r: 4 }}
-            />
-            <Line
-              type="monotone"
-              dataKey={emergencyKey}
-              name={`Emergency (${metricLabels[metricType]})`}
-              stroke={COLORS.coral}
-              strokeWidth={2}
-              dot={false}
-              strokeDasharray="5 5"
-            />
-            <Line
-              type="monotone"
-              dataKey={nonEmergencyKey}
-              name={`Non-Emergency (${metricLabels[metricType]})`}
-              stroke={COLORS.teal}
-              strokeWidth={2}
-              dot={false}
-              strokeDasharray="3 3"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+              <XAxis
+                dataKey="month"
+                tickFormatter={formatMonth}
+                tick={{ fontSize: 11, fill: '#6B7280' }}
+                interval="preserveStartEnd"
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: '#6B7280' }}
+                width={45}
+                domain={[0, 'auto']}
+                label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#6B7280' } }}
+              />
+              <Tooltip
+                {...tooltipStyle}
+                formatter={(value, name) => [`${value} min`, metricLabels[metricType]]}
+                labelFormatter={formatMonth}
+              />
+              <Line
+                type="monotone"
+                dataKey={metricType}
+                name={metricLabels[metricType]}
+                stroke={COLORS.navy}
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
       {/* Two column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* By District */}
+        {/* Long-term trend */}
         <ChartCard
-          title="Response Time by District"
-          subtitle="Median minutes by NOPD district"
+          title="Long-Term Trend"
+          subtitle="Full history since 2015"
         >
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={districtData} layout="vertical">
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={fullHistory}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
               <XAxis
-                type="number"
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                domain={[0, 'auto']}
+                dataKey="month"
+                tickFormatter={(val) => {
+                  const [year, month] = val.split('-');
+                  return month === '01' ? year : '';
+                }}
+                tick={{ fontSize: 10, fill: '#6B7280' }}
+                interval={11}
               />
               <YAxis
-                type="category"
-                dataKey="district"
                 tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={80}
+                width={40}
+                domain={[0, 'auto']}
               />
               <Tooltip
                 {...tooltipStyle}
-                formatter={(value, name) => {
-                  if (name === 'median') return [`${value} min`, 'Median Response'];
-                  return [formatNumber(value), 'Calls'];
-                }}
+                formatter={(value) => [`${value} min`, 'Median']}
+                labelFormatter={formatMonth}
               />
-              <Bar dataKey="median" fill={COLORS.navy} radius={[0, 4, 4, 0]}>
-                {districtData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={parseFloat(entry.median) > 20 ? COLORS.coral : COLORS.navy}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
+              <Line
+                type="monotone"
+                dataKey="median"
+                stroke={COLORS.navy}
+                strokeWidth={1.5}
+                dot={false}
+              />
+            </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Distribution histogram */}
+        {/* Monthly incidents */}
         <ChartCard
-          title="Response Time Distribution"
-          subtitle="Call count by response time bucket"
+          title="Monthly Incident Volume"
+          subtitle="Number of calls per month"
         >
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={distributionData}>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={incidentsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
               <XAxis
-                dataKey="bucket"
-                tick={{ fontSize: 10, fill: '#6B7280' }}
-                label={{ value: 'Minutes', position: 'insideBottom', offset: -5, style: { fontSize: 11 } }}
+                dataKey="month"
+                tickFormatter={formatMonth}
+                tick={{ fontSize: 11, fill: '#6B7280' }}
+                interval="preserveStartEnd"
               />
               <YAxis
                 tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={60}
+                width={50}
                 domain={[0, 'auto']}
-                tickFormatter={(val) => formatNumber(val)}
+                tickFormatter={(val) => `${(val / 1000).toFixed(0)}K`}
               />
               <Tooltip
                 {...tooltipStyle}
-                formatter={(value) => [formatNumber(value), 'Calls']}
-                labelFormatter={(label) => `${label} minutes`}
+                formatter={(value) => [formatNumber(value), 'Incidents']}
+                labelFormatter={formatMonth}
               />
-              <Bar dataKey="count" fill={COLORS.teal} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="calls" fill={COLORS.teal} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       </div>
 
-      {/* Response by call type table */}
+      {/* Monthly breakdown table */}
       <ChartCard
-        title="Response Time by Call Type"
-        subtitle="Top call types by volume"
+        title="Monthly Breakdown"
+        subtitle="Last 12 months detail"
       >
         <DataTable
           columns={tableColumns}
-          data={typeData}
+          data={tableData}
           maxHeight="400px"
-        />
-      </ChartCard>
-
-      {/* District detail table */}
-      <ChartCard
-        title="District Performance Detail"
-        subtitle="All districts with call volumes"
-      >
-        <DataTable
-          columns={districtTableColumns}
-          data={districtData}
-          maxHeight="320px"
         />
       </ChartCard>
     </div>
