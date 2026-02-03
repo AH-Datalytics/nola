@@ -15,7 +15,7 @@ import DataTable from '../components/DataTable';
 
 // Mock user data
 const mockUsers = [
-  { id: 1, name: 'LaToya Cantrell', role: 'Admin', email: 'mayor@nola.gov', lastLogin: '2026-02-03 09:15 AM', status: 'Active' },
+  { id: 1, name: 'Helena Moreno', role: 'Admin', email: 'mayor@nola.gov', lastLogin: '2026-02-03 09:15 AM', status: 'Active' },
   { id: 2, name: 'Chief Deputy', role: 'Admin', email: 'deputy@nola.gov', lastLogin: '2026-02-02 04:30 PM', status: 'Active' },
   { id: 3, name: 'Policy Analyst', role: 'Viewer', email: 'analyst@nola.gov', lastLogin: '2026-02-03 08:45 AM', status: 'Active' },
   { id: 4, name: 'Communications Dir', role: 'Viewer', email: 'comms@nola.gov', lastLogin: '2026-02-01 11:20 AM', status: 'Active' },
@@ -26,7 +26,7 @@ const mockUsers = [
 
 // Mock audit log
 const mockAuditLog = [
-  { timestamp: '2026-02-03 09:15:23', user: 'Mayor Cantrell', action: 'Logged in', details: 'Dashboard access' },
+  { timestamp: '2026-02-03 09:15:23', user: 'Mayor Moreno', action: 'Logged in', details: 'Dashboard access' },
   { timestamp: '2026-02-03 08:45:12', user: 'Policy Analyst', action: 'Viewed report', details: 'Murder statistics export' },
   { timestamp: '2026-02-02 16:30:45', user: 'Admin', action: 'Data upload', details: 'Updated crime data Q4 2025' },
   { timestamp: '2026-02-02 14:22:18', user: 'Chief Deputy', action: 'Settings changed', details: 'Email alerts enabled' },
