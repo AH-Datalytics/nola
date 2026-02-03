@@ -1,0 +1,494 @@
+[
+  {
+    "month": "2015-01",
+    "addresses": 177173
+  },
+  {
+    "month": "2015-02",
+    "addresses": 177248
+  },
+  {
+    "month": "2015-03",
+    "addresses": 177400
+  },
+  {
+    "month": "2015-04",
+    "addresses": 177707
+  },
+  {
+    "month": "2015-05",
+    "addresses": 176168
+  },
+  {
+    "month": "2015-06",
+    "addresses": 178679
+  },
+  {
+    "month": "2015-07",
+    "addresses": 178809
+  },
+  {
+    "month": "2015-08",
+    "addresses": 179071
+  },
+  {
+    "month": "2015-09",
+    "addresses": 179538
+  },
+  {
+    "month": "2015-10",
+    "addresses": 179617
+  },
+  {
+    "month": "2015-11",
+    "addresses": 179858
+  },
+  {
+    "month": "2015-12",
+    "addresses": 179957
+  },
+  {
+    "month": "2016-01",
+    "addresses": 180079
+  },
+  {
+    "month": "2016-02",
+    "addresses": 180153
+  },
+  {
+    "month": "2016-03",
+    "addresses": 180225
+  },
+  {
+    "month": "2016-04",
+    "addresses": 180619
+  },
+  {
+    "month": "2016-05",
+    "addresses": 180908
+  },
+  {
+    "month": "2016-06",
+    "addresses": 181052
+  },
+  {
+    "month": "2016-07",
+    "addresses": 181295
+  },
+  {
+    "month": "2016-08",
+    "addresses": 181654
+  },
+  {
+    "month": "2016-10",
+    "addresses": 181937
+  },
+  {
+    "month": "2016-11",
+    "addresses": 182074
+  },
+  {
+    "month": "2016-12",
+    "addresses": 182157
+  },
+  {
+    "month": "2017-01",
+    "addresses": 182219
+  },
+  {
+    "month": "2017-02",
+    "addresses": 182376
+  },
+  {
+    "month": "2017-03",
+    "addresses": 182586
+  },
+  {
+    "month": "2017-04",
+    "addresses": 182774
+  },
+  {
+    "month": "2017-05",
+    "addresses": 182934
+  },
+  {
+    "month": "2017-06",
+    "addresses": 183026
+  },
+  {
+    "month": "2017-07",
+    "addresses": 183278
+  },
+  {
+    "month": "2017-08",
+    "addresses": 183477
+  },
+  {
+    "month": "2017-10",
+    "addresses": 183522
+  },
+  {
+    "month": "2017-11",
+    "addresses": 183586
+  },
+  {
+    "month": "2017-12",
+    "addresses": 183632
+  },
+  {
+    "month": "2018-01",
+    "addresses": 183606
+  },
+  {
+    "month": "2018-02",
+    "addresses": 183665
+  },
+  {
+    "month": "2018-03",
+    "addresses": 183908
+  },
+  {
+    "month": "2018-04",
+    "addresses": 184074
+  },
+  {
+    "month": "2018-05",
+    "addresses": 184452
+  },
+  {
+    "month": "2018-06",
+    "addresses": 184385
+  },
+  {
+    "month": "2018-08",
+    "addresses": 184666
+  },
+  {
+    "month": "2018-09",
+    "addresses": 184648
+  },
+  {
+    "month": "2018-10",
+    "addresses": 185026.99999999997
+  },
+  {
+    "month": "2018-11",
+    "addresses": 185133
+  },
+  {
+    "month": "2018-12",
+    "addresses": 185199
+  },
+  {
+    "month": "2019-01",
+    "addresses": 185354
+  },
+  {
+    "month": "2019-02",
+    "addresses": 185761
+  },
+  {
+    "month": "2019-03",
+    "addresses": 185838
+  },
+  {
+    "month": "2019-04",
+    "addresses": 186381
+  },
+  {
+    "month": "2019-05",
+    "addresses": 186631
+  },
+  {
+    "month": "2019-06",
+    "addresses": 186830
+  },
+  {
+    "month": "2019-07",
+    "addresses": 187078
+  },
+  {
+    "month": "2019-08",
+    "addresses": 187471
+  },
+  {
+    "month": "2019-10",
+    "addresses": 188172
+  },
+  {
+    "month": "2019-11",
+    "addresses": 188415
+  },
+  {
+    "month": "2019-12",
+    "addresses": 188516
+  },
+  {
+    "month": "2020-01",
+    "addresses": 188736
+  },
+  {
+    "month": "2020-02",
+    "addresses": 188817
+  },
+  {
+    "month": "2020-03",
+    "addresses": 188871
+  },
+  {
+    "month": "2020-04",
+    "addresses": 188882
+  },
+  {
+    "month": "2020-05",
+    "addresses": 188949
+  },
+  {
+    "month": "2020-06",
+    "addresses": 189061
+  },
+  {
+    "month": "2020-07",
+    "addresses": 189101
+  },
+  {
+    "month": "2020-08",
+    "addresses": 189238
+  },
+  {
+    "month": "2020-09",
+    "addresses": 189449
+  },
+  {
+    "month": "2020-10",
+    "addresses": 189523
+  },
+  {
+    "month": "2020-11",
+    "addresses": 189672
+  },
+  {
+    "month": "2020-12",
+    "addresses": 189649
+  },
+  {
+    "month": "2021-02",
+    "addresses": 190312
+  },
+  {
+    "month": "2021-03",
+    "addresses": 190389
+  },
+  {
+    "month": "2021-04",
+    "addresses": 190539
+  },
+  {
+    "month": "2021-05",
+    "addresses": 190757
+  },
+  {
+    "month": "2021-06",
+    "addresses": 190817
+  },
+  {
+    "month": "2021-08",
+    "addresses": 190932
+  },
+  {
+    "month": "2021-09",
+    "addresses": 190967
+  },
+  {
+    "month": "2021-10",
+    "addresses": 191076
+  },
+  {
+    "month": "2021-11",
+    "addresses": 191083
+  },
+  {
+    "month": "2021-12",
+    "addresses": 191110
+  },
+  {
+    "month": "2022-01",
+    "addresses": 191180
+  },
+  {
+    "month": "2022-02",
+    "addresses": 191371
+  },
+  {
+    "month": "2022-03",
+    "addresses": 191627
+  },
+  {
+    "month": "2022-04",
+    "addresses": 191702
+  },
+  {
+    "month": "2022-05",
+    "addresses": 191536
+  },
+  {
+    "month": "2022-06",
+    "addresses": 191681
+  },
+  {
+    "month": "2022-07",
+    "addresses": 191707
+  },
+  {
+    "month": "2022-08",
+    "addresses": 191799
+  },
+  {
+    "month": "2022-09",
+    "addresses": 191535
+  },
+  {
+    "month": "2022-10",
+    "addresses": 191648
+  },
+  {
+    "month": "2022-11",
+    "addresses": 191948
+  },
+  {
+    "month": "2022-12",
+    "addresses": 191972
+  },
+  {
+    "month": "2023-01",
+    "addresses": 191901
+  },
+  {
+    "month": "2023-02",
+    "addresses": 192019
+  },
+  {
+    "month": "2023-03",
+    "addresses": 192088
+  },
+  {
+    "month": "2023-04",
+    "addresses": 192236
+  },
+  {
+    "month": "2023-05",
+    "addresses": 192228
+  },
+  {
+    "month": "2023-06",
+    "addresses": 192550
+  },
+  {
+    "month": "2023-08",
+    "addresses": 192525
+  },
+  {
+    "month": "2023-09",
+    "addresses": 192571
+  },
+  {
+    "month": "2023-10",
+    "addresses": 192739
+  },
+  {
+    "month": "2023-11",
+    "addresses": 192770
+  },
+  {
+    "month": "2023-12",
+    "addresses": 192805
+  },
+  {
+    "month": "2024-01",
+    "addresses": 192842
+  },
+  {
+    "month": "2024-02",
+    "addresses": 193280
+  },
+  {
+    "month": "2024-03",
+    "addresses": 193338
+  },
+  {
+    "month": "2024-04",
+    "addresses": 193352
+  },
+  {
+    "month": "2024-05",
+    "addresses": 193390
+  },
+  {
+    "month": "2024-06",
+    "addresses": 193407
+  },
+  {
+    "month": "2024-08",
+    "addresses": 193591
+  },
+  {
+    "month": "2024-09",
+    "addresses": 193706
+  },
+  {
+    "month": "2024-10",
+    "addresses": 193777
+  },
+  {
+    "month": "2024-11",
+    "addresses": 193848
+  },
+  {
+    "month": "2024-12",
+    "addresses": 193906
+  },
+  {
+    "month": "2025-01",
+    "addresses": 193943
+  },
+  {
+    "month": "2025-02",
+    "addresses": 193937
+  },
+  {
+    "month": "2025-03",
+    "addresses": 193954
+  },
+  {
+    "month": "2025-04",
+    "addresses": 193970
+  },
+  {
+    "month": "2025-05",
+    "addresses": 193990
+  },
+  {
+    "month": "2025-06",
+    "addresses": 194022
+  },
+  {
+    "month": "2025-08",
+    "addresses": 194110
+  },
+  {
+    "month": "2025-10",
+    "addresses": 194210
+  },
+  {
+    "month": "2025-11",
+    "addresses": 194328
+  },
+  {
+    "month": "2025-12",
+    "addresses": 194273
+  },
+  {
+    "month": "2026-01",
+    "addresses": 194368
+  }
+]

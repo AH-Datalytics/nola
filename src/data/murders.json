@@ -1,0 +1,534 @@
+[
+  {
+    "month": "2015-01",
+    "murders": 16
+  },
+  {
+    "month": "2015-02",
+    "murders": 12
+  },
+  {
+    "month": "2015-03",
+    "murders": 19
+  },
+  {
+    "month": "2015-04",
+    "murders": 13
+  },
+  {
+    "month": "2015-05",
+    "murders": 17
+  },
+  {
+    "month": "2015-06",
+    "murders": 19
+  },
+  {
+    "month": "2015-07",
+    "murders": 21
+  },
+  {
+    "month": "2015-08",
+    "murders": 8
+  },
+  {
+    "month": "2015-09",
+    "murders": 12
+  },
+  {
+    "month": "2015-10",
+    "murders": 3
+  },
+  {
+    "month": "2015-11",
+    "murders": 11
+  },
+  {
+    "month": "2015-12",
+    "murders": 19
+  },
+  {
+    "month": "2016-01",
+    "murders": 10
+  },
+  {
+    "month": "2016-02",
+    "murders": 7
+  },
+  {
+    "month": "2016-03",
+    "murders": 16
+  },
+  {
+    "month": "2016-04",
+    "murders": 9
+  },
+  {
+    "month": "2016-05",
+    "murders": 17
+  },
+  {
+    "month": "2016-06",
+    "murders": 12
+  },
+  {
+    "month": "2016-07",
+    "murders": 26
+  },
+  {
+    "month": "2016-08",
+    "murders": 17
+  },
+  {
+    "month": "2016-09",
+    "murders": 18
+  },
+  {
+    "month": "2016-10",
+    "murders": 16
+  },
+  {
+    "month": "2016-11",
+    "murders": 20
+  },
+  {
+    "month": "2016-12",
+    "murders": 9
+  },
+  {
+    "month": "2017-01",
+    "murders": 23
+  },
+  {
+    "month": "2017-02",
+    "murders": 13
+  },
+  {
+    "month": "2017-03",
+    "murders": 14
+  },
+  {
+    "month": "2017-04",
+    "murders": 14
+  },
+  {
+    "month": "2017-05",
+    "murders": 16
+  },
+  {
+    "month": "2017-06",
+    "murders": 17
+  },
+  {
+    "month": "2017-07",
+    "murders": 6
+  },
+  {
+    "month": "2017-08",
+    "murders": 10
+  },
+  {
+    "month": "2017-09",
+    "murders": 8
+  },
+  {
+    "month": "2017-10",
+    "murders": 15
+  },
+  {
+    "month": "2017-11",
+    "murders": 13
+  },
+  {
+    "month": "2017-12",
+    "murders": 9
+  },
+  {
+    "month": "2018-01",
+    "murders": 19
+  },
+  {
+    "month": "2018-02",
+    "murders": 20
+  },
+  {
+    "month": "2018-03",
+    "murders": 10
+  },
+  {
+    "month": "2018-04",
+    "murders": 17
+  },
+  {
+    "month": "2018-05",
+    "murders": 16
+  },
+  {
+    "month": "2018-06",
+    "murders": 7
+  },
+  {
+    "month": "2018-07",
+    "murders": 10
+  },
+  {
+    "month": "2018-08",
+    "murders": 13
+  },
+  {
+    "month": "2018-09",
+    "murders": 9
+  },
+  {
+    "month": "2018-10",
+    "murders": 8
+  },
+  {
+    "month": "2018-11",
+    "murders": 5
+  },
+  {
+    "month": "2018-12",
+    "murders": 12
+  },
+  {
+    "month": "2019-01",
+    "murders": 10
+  },
+  {
+    "month": "2019-02",
+    "murders": 13
+  },
+  {
+    "month": "2019-03",
+    "murders": 4
+  },
+  {
+    "month": "2019-04",
+    "murders": 7
+  },
+  {
+    "month": "2019-05",
+    "murders": 14
+  },
+  {
+    "month": "2019-06",
+    "murders": 10
+  },
+  {
+    "month": "2019-07",
+    "murders": 10
+  },
+  {
+    "month": "2019-08",
+    "murders": 11
+  },
+  {
+    "month": "2019-09",
+    "murders": 9
+  },
+  {
+    "month": "2019-10",
+    "murders": 3
+  },
+  {
+    "month": "2019-11",
+    "murders": 8
+  },
+  {
+    "month": "2019-12",
+    "murders": 22
+  },
+  {
+    "month": "2020-01",
+    "murders": 14
+  },
+  {
+    "month": "2020-02",
+    "murders": 11
+  },
+  {
+    "month": "2020-03",
+    "murders": 8
+  },
+  {
+    "month": "2020-04",
+    "murders": 20
+  },
+  {
+    "month": "2020-05",
+    "murders": 10
+  },
+  {
+    "month": "2020-06",
+    "murders": 16
+  },
+  {
+    "month": "2020-07",
+    "murders": 24
+  },
+  {
+    "month": "2020-08",
+    "murders": 17
+  },
+  {
+    "month": "2020-09",
+    "murders": 19
+  },
+  {
+    "month": "2020-10",
+    "murders": 21
+  },
+  {
+    "month": "2020-11",
+    "murders": 19
+  },
+  {
+    "month": "2020-12",
+    "murders": 16
+  },
+  {
+    "month": "2021-01",
+    "murders": 19
+  },
+  {
+    "month": "2021-02",
+    "murders": 10
+  },
+  {
+    "month": "2021-03",
+    "murders": 20
+  },
+  {
+    "month": "2021-04",
+    "murders": 17
+  },
+  {
+    "month": "2021-05",
+    "murders": 18
+  },
+  {
+    "month": "2021-06",
+    "murders": 17
+  },
+  {
+    "month": "2021-07",
+    "murders": 23
+  },
+  {
+    "month": "2021-08",
+    "murders": 20
+  },
+  {
+    "month": "2021-09",
+    "murders": 11
+  },
+  {
+    "month": "2021-10",
+    "murders": 19
+  },
+  {
+    "month": "2021-11",
+    "murders": 17
+  },
+  {
+    "month": "2021-12",
+    "murders": 25
+  },
+  {
+    "month": "2022-01",
+    "murders": 22
+  },
+  {
+    "month": "2022-02",
+    "murders": 18
+  },
+  {
+    "month": "2022-03",
+    "murders": 28
+  },
+  {
+    "month": "2022-04",
+    "murders": 24
+  },
+  {
+    "month": "2022-05",
+    "murders": 23
+  },
+  {
+    "month": "2022-06",
+    "murders": 32
+  },
+  {
+    "month": "2022-07",
+    "murders": 17
+  },
+  {
+    "month": "2022-08",
+    "murders": 25
+  },
+  {
+    "month": "2022-09",
+    "murders": 19
+  },
+  {
+    "month": "2022-10",
+    "murders": 16
+  },
+  {
+    "month": "2022-11",
+    "murders": 15
+  },
+  {
+    "month": "2022-12",
+    "murders": 27
+  },
+  {
+    "month": "2023-01",
+    "murders": 22
+  },
+  {
+    "month": "2023-02",
+    "murders": 18
+  },
+  {
+    "month": "2023-03",
+    "murders": 18
+  },
+  {
+    "month": "2023-04",
+    "murders": 18
+  },
+  {
+    "month": "2023-05",
+    "murders": 21
+  },
+  {
+    "month": "2023-06",
+    "murders": 17
+  },
+  {
+    "month": "2023-07",
+    "murders": 14
+  },
+  {
+    "month": "2023-08",
+    "murders": 17
+  },
+  {
+    "month": "2023-09",
+    "murders": 10
+  },
+  {
+    "month": "2023-10",
+    "murders": 11
+  },
+  {
+    "month": "2023-11",
+    "murders": 22
+  },
+  {
+    "month": "2023-12",
+    "murders": 5
+  },
+  {
+    "month": "2024-01",
+    "murders": 19
+  },
+  {
+    "month": "2024-02",
+    "murders": 10
+  },
+  {
+    "month": "2024-03",
+    "murders": 11
+  },
+  {
+    "month": "2024-04",
+    "murders": 12
+  },
+  {
+    "month": "2024-05",
+    "murders": 5
+  },
+  {
+    "month": "2024-06",
+    "murders": 14
+  },
+  {
+    "month": "2024-07",
+    "murders": 12
+  },
+  {
+    "month": "2024-08",
+    "murders": 10
+  },
+  {
+    "month": "2024-09",
+    "murders": 3
+  },
+  {
+    "month": "2024-10",
+    "murders": 10
+  },
+  {
+    "month": "2024-11",
+    "murders": 11
+  },
+  {
+    "month": "2024-12",
+    "murders": 7
+  },
+  {
+    "month": "2025-01",
+    "murders": 19
+  },
+  {
+    "month": "2025-02",
+    "murders": 2
+  },
+  {
+    "month": "2025-03",
+    "murders": 7
+  },
+  {
+    "month": "2025-04",
+    "murders": 7
+  },
+  {
+    "month": "2025-05",
+    "murders": 9
+  },
+  {
+    "month": "2025-06",
+    "murders": 10
+  },
+  {
+    "month": "2025-07",
+    "murders": 10
+  },
+  {
+    "month": "2025-08",
+    "murders": 10
+  },
+  {
+    "month": "2025-09",
+    "murders": 13
+  },
+  {
+    "month": "2025-10",
+    "murders": 11
+  },
+  {
+    "month": "2025-11",
+    "murders": 10
+  },
+  {
+    "month": "2025-12",
+    "murders": 13
+  },
+  {
+    "month": "2026-01",
+    "murders": 9
+  }
+]
