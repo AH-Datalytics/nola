@@ -1,0 +1,512 @@
+[
+  {
+    "month": "2017-07",
+    "medianPrice": null,
+    "avgPrice": -0.0182
+  },
+  {
+    "month": "2017-08",
+    "medianPrice": null,
+    "avgPrice": -0.0354
+  },
+  {
+    "month": "2017-09",
+    "medianPrice": null,
+    "avgPrice": -0.0455
+  },
+  {
+    "month": "2017-10",
+    "medianPrice": null,
+    "avgPrice": -0.0379
+  },
+  {
+    "month": "2017-11",
+    "medianPrice": null,
+    "avgPrice": -0.02
+  },
+  {
+    "month": "2017-12",
+    "medianPrice": null,
+    "avgPrice": -0.0186
+  },
+  {
+    "month": "2018-01",
+    "medianPrice": null,
+    "avgPrice": 0.0073
+  },
+  {
+    "month": "2018-02",
+    "medianPrice": null,
+    "avgPrice": 0.0067
+  },
+  {
+    "month": "2018-03",
+    "medianPrice": null,
+    "avgPrice": 0.0043
+  },
+  {
+    "month": "2018-04",
+    "medianPrice": null,
+    "avgPrice": 0.0029
+  },
+  {
+    "month": "2018-05",
+    "medianPrice": null,
+    "avgPrice": 0.0085
+  },
+  {
+    "month": "2018-06",
+    "medianPrice": null,
+    "avgPrice": 0.0024
+  },
+  {
+    "month": "2018-07",
+    "medianPrice": null,
+    "avgPrice": 0.0126
+  },
+  {
+    "month": "2018-08",
+    "medianPrice": null,
+    "avgPrice": 0.0218
+  },
+  {
+    "month": "2018-09",
+    "medianPrice": null,
+    "avgPrice": 0.02
+  },
+  {
+    "month": "2018-10",
+    "medianPrice": null,
+    "avgPrice": 0.0021
+  },
+  {
+    "month": "2018-11",
+    "medianPrice": null,
+    "avgPrice": -0.0003
+  },
+  {
+    "month": "2018-12",
+    "medianPrice": null,
+    "avgPrice": 0.003
+  },
+  {
+    "month": "2019-01",
+    "medianPrice": null,
+    "avgPrice": -0.0106
+  },
+  {
+    "month": "2019-02",
+    "medianPrice": null,
+    "avgPrice": 0.0003
+  },
+  {
+    "month": "2019-03",
+    "medianPrice": null,
+    "avgPrice": 0.0011
+  },
+  {
+    "month": "2019-04",
+    "medianPrice": null,
+    "avgPrice": 0.007
+  },
+  {
+    "month": "2019-05",
+    "medianPrice": null,
+    "avgPrice": 0.0168
+  },
+  {
+    "month": "2019-06",
+    "medianPrice": null,
+    "avgPrice": 0.0295
+  },
+  {
+    "month": "2019-07",
+    "medianPrice": null,
+    "avgPrice": 0.034
+  },
+  {
+    "month": "2019-08",
+    "medianPrice": null,
+    "avgPrice": 0.025
+  },
+  {
+    "month": "2019-09",
+    "medianPrice": null,
+    "avgPrice": 0.0312
+  },
+  {
+    "month": "2019-10",
+    "medianPrice": null,
+    "avgPrice": 0.0423
+  },
+  {
+    "month": "2019-11",
+    "medianPrice": null,
+    "avgPrice": 0.0345
+  },
+  {
+    "month": "2019-12",
+    "medianPrice": null,
+    "avgPrice": 0.0391
+  },
+  {
+    "month": "2020-01",
+    "medianPrice": null,
+    "avgPrice": 0.0357
+  },
+  {
+    "month": "2020-02",
+    "medianPrice": null,
+    "avgPrice": -0.003
+  },
+  {
+    "month": "2020-03",
+    "medianPrice": null,
+    "avgPrice": 0.0007
+  },
+  {
+    "month": "2020-04",
+    "medianPrice": null,
+    "avgPrice": -0.0069
+  },
+  {
+    "month": "2020-05",
+    "medianPrice": null,
+    "avgPrice": -0.0237
+  },
+  {
+    "month": "2020-06",
+    "medianPrice": null,
+    "avgPrice": -0.0168
+  },
+  {
+    "month": "2020-07",
+    "medianPrice": null,
+    "avgPrice": -0.0172
+  },
+  {
+    "month": "2020-08",
+    "medianPrice": null,
+    "avgPrice": -0.0148
+  },
+  {
+    "month": "2020-09",
+    "medianPrice": null,
+    "avgPrice": -0.0106
+  },
+  {
+    "month": "2020-10",
+    "medianPrice": null,
+    "avgPrice": -0.0204
+  },
+  {
+    "month": "2020-11",
+    "medianPrice": null,
+    "avgPrice": -0.0235
+  },
+  {
+    "month": "2020-12",
+    "medianPrice": null,
+    "avgPrice": -0.0414
+  },
+  {
+    "month": "2021-01",
+    "medianPrice": null,
+    "avgPrice": -0.0531
+  },
+  {
+    "month": "2021-02",
+    "medianPrice": null,
+    "avgPrice": -0.0514
+  },
+  {
+    "month": "2021-03",
+    "medianPrice": null,
+    "avgPrice": -0.033
+  },
+  {
+    "month": "2021-04",
+    "medianPrice": null,
+    "avgPrice": -0.0485
+  },
+  {
+    "month": "2021-05",
+    "medianPrice": null,
+    "avgPrice": -0.0464
+  },
+  {
+    "month": "2021-06",
+    "medianPrice": null,
+    "avgPrice": -0.0466
+  },
+  {
+    "month": "2021-07",
+    "medianPrice": null,
+    "avgPrice": -0.0376
+  },
+  {
+    "month": "2021-08",
+    "medianPrice": null,
+    "avgPrice": -0.0523
+  },
+  {
+    "month": "2021-09",
+    "medianPrice": null,
+    "avgPrice": -0.0665
+  },
+  {
+    "month": "2021-10",
+    "medianPrice": null,
+    "avgPrice": -0.0682
+  },
+  {
+    "month": "2021-11",
+    "medianPrice": null,
+    "avgPrice": -0.0288
+  },
+  {
+    "month": "2021-12",
+    "medianPrice": null,
+    "avgPrice": -0.0196
+  },
+  {
+    "month": "2022-01",
+    "medianPrice": null,
+    "avgPrice": -0.0205
+  },
+  {
+    "month": "2022-02",
+    "medianPrice": null,
+    "avgPrice": -0.0027
+  },
+  {
+    "month": "2022-03",
+    "medianPrice": null,
+    "avgPrice": 0.003
+  },
+  {
+    "month": "2022-04",
+    "medianPrice": null,
+    "avgPrice": 0.0192
+  },
+  {
+    "month": "2022-05",
+    "medianPrice": null,
+    "avgPrice": 0.0434
+  },
+  {
+    "month": "2022-06",
+    "medianPrice": null,
+    "avgPrice": 0.0452
+  },
+  {
+    "month": "2022-07",
+    "medianPrice": null,
+    "avgPrice": 0.0414
+  },
+  {
+    "month": "2022-08",
+    "medianPrice": null,
+    "avgPrice": 0.058
+  },
+  {
+    "month": "2022-09",
+    "medianPrice": null,
+    "avgPrice": 0.0734
+  },
+  {
+    "month": "2022-10",
+    "medianPrice": null,
+    "avgPrice": 0.0979
+  },
+  {
+    "month": "2022-11",
+    "medianPrice": null,
+    "avgPrice": 0.0622
+  },
+  {
+    "month": "2022-12",
+    "medianPrice": null,
+    "avgPrice": 0.0671
+  },
+  {
+    "month": "2023-01",
+    "medianPrice": null,
+    "avgPrice": 0.084
+  },
+  {
+    "month": "2023-02",
+    "medianPrice": null,
+    "avgPrice": 0.096
+  },
+  {
+    "month": "2023-03",
+    "medianPrice": null,
+    "avgPrice": 0.0562
+  },
+  {
+    "month": "2023-04",
+    "medianPrice": null,
+    "avgPrice": 0.0555
+  },
+  {
+    "month": "2023-05",
+    "medianPrice": null,
+    "avgPrice": 0.0227
+  },
+  {
+    "month": "2023-06",
+    "medianPrice": null,
+    "avgPrice": -0.0038
+  },
+  {
+    "month": "2023-07",
+    "medianPrice": null,
+    "avgPrice": -0.0137
+  },
+  {
+    "month": "2023-08",
+    "medianPrice": null,
+    "avgPrice": -0.019
+  },
+  {
+    "month": "2023-09",
+    "medianPrice": null,
+    "avgPrice": -0.0218
+  },
+  {
+    "month": "2023-10",
+    "medianPrice": null,
+    "avgPrice": -0.0321
+  },
+  {
+    "month": "2023-11",
+    "medianPrice": null,
+    "avgPrice": -0.0281
+  },
+  {
+    "month": "2023-12",
+    "medianPrice": null,
+    "avgPrice": -0.0375
+  },
+  {
+    "month": "2024-01",
+    "medianPrice": null,
+    "avgPrice": -0.0336
+  },
+  {
+    "month": "2024-02",
+    "medianPrice": null,
+    "avgPrice": -0.0367
+  },
+  {
+    "month": "2024-03",
+    "medianPrice": null,
+    "avgPrice": -0.0331
+  },
+  {
+    "month": "2024-04",
+    "medianPrice": null,
+    "avgPrice": -0.0101
+  },
+  {
+    "month": "2024-05",
+    "medianPrice": null,
+    "avgPrice": -0.0183
+  },
+  {
+    "month": "2024-06",
+    "medianPrice": null,
+    "avgPrice": -0.0019
+  },
+  {
+    "month": "2024-07",
+    "medianPrice": null,
+    "avgPrice": -0.0049
+  },
+  {
+    "month": "2024-08",
+    "medianPrice": null,
+    "avgPrice": 0.0125
+  },
+  {
+    "month": "2024-09",
+    "medianPrice": null,
+    "avgPrice": -0.0019
+  },
+  {
+    "month": "2024-10",
+    "medianPrice": null,
+    "avgPrice": 0.0001
+  },
+  {
+    "month": "2024-11",
+    "medianPrice": null,
+    "avgPrice": -0.0041
+  },
+  {
+    "month": "2024-12",
+    "medianPrice": null,
+    "avgPrice": 0.003
+  },
+  {
+    "month": "2025-01",
+    "medianPrice": null,
+    "avgPrice": -0.0012
+  },
+  {
+    "month": "2025-02",
+    "medianPrice": null,
+    "avgPrice": 0.003
+  },
+  {
+    "month": "2025-03",
+    "medianPrice": null,
+    "avgPrice": 0.0125
+  },
+  {
+    "month": "2025-04",
+    "medianPrice": null,
+    "avgPrice": -0.02
+  },
+  {
+    "month": "2025-05",
+    "medianPrice": null,
+    "avgPrice": -0.0237
+  },
+  {
+    "month": "2025-06",
+    "medianPrice": null,
+    "avgPrice": -0.0149
+  },
+  {
+    "month": "2025-07",
+    "medianPrice": null,
+    "avgPrice": -0.0161
+  },
+  {
+    "month": "2025-08",
+    "medianPrice": null,
+    "avgPrice": -0.0348
+  },
+  {
+    "month": "2025-09",
+    "medianPrice": null,
+    "avgPrice": -0.0183
+  },
+  {
+    "month": "2025-10",
+    "medianPrice": null,
+    "avgPrice": -0.0349
+  },
+  {
+    "month": "2025-11",
+    "medianPrice": null,
+    "avgPrice": -0.0321
+  },
+  {
+    "month": "2025-12",
+    "medianPrice": null,
+    "avgPrice": -0.0373
+  }
+]

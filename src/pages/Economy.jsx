@@ -20,6 +20,8 @@ import { COLORS, tooltipStyle, formatMonth, formatNumber, formatPercent } from '
 
 import unemploymentData from '../data/unemployment.json';
 import addressesData from '../data/addresses.json';
+import homePricesData from '../data/home-prices.json';
+import householdIncomeData from '../data/household-income.json';
 
 export default function Economy() {
   // Calculate statistics
@@ -51,6 +53,24 @@ export default function Economy() {
     const last5Years = unemploymentData.slice(-60);
     const avg5Year = last5Years.reduce((sum, d) => sum + (d.rate || 0), 0) / last5Years.length;
 
+    // Home prices
+    const latestHomePrice = homePricesData[homePricesData.length - 1];
+    const yearAgoHomePrice = homePricesData.find(d => {
+      const [y, m] = d.month.split('-');
+      const [ly, lm] = latestHomePrice.month.split('-');
+      return parseInt(y) === parseInt(ly) - 1 && m === lm;
+    });
+    const homePriceYoY = yearAgoHomePrice?.medianPrice
+      ? ((latestHomePrice.medianPrice - yearAgoHomePrice.medianPrice) / yearAgoHomePrice.medianPrice) * 100
+      : 0;
+
+    // Household income
+    const latestIncome = householdIncomeData[householdIncomeData.length - 1];
+    const prevIncome = householdIncomeData[householdIncomeData.length - 2];
+    const incomeChange = prevIncome?.income
+      ? ((latestIncome.income - prevIncome.income) / prevIncome.income) * 100
+      : 0;
+
     return {
       currentRate: latest?.rate,
       currentMonth: latest?.month,
@@ -64,6 +84,13 @@ export default function Economy() {
       addressYoY: yearAgoAddresses?.addresses
         ? ((latestAddresses.addresses - yearAgoAddresses.addresses) / yearAgoAddresses.addresses) * 100
         : 0,
+      latestMedianPrice: latestHomePrice?.medianPrice,
+      latestAvgPrice: latestHomePrice?.avgPrice,
+      homePriceMonth: latestHomePrice?.month,
+      homePriceYoY,
+      latestIncome: latestIncome?.income,
+      incomeYear: latestIncome?.year,
+      incomeChange,
     };
   }, []);
 
@@ -145,14 +172,15 @@ export default function Economy() {
       {/* Data sources note */}
       <div className="bg-warm-gray-100 border border-warm-gray-200 rounded-lg p-4">
         <p className="text-sm text-gray-600">
-          <strong>Data Sources:</strong> Unemployment rate from FRED (series LAORLE0URN).
+          <strong>Data Sources:</strong> Unemployment rate from FRED (LAORLE0URN).
+          Median household income from FRED (MHILA22071A052NCEN).
+          Home prices from Realtor.com via Econdata.
           Active residential addresses from USPS delivery data via The Data Center.
-          Additional economic indicators (median income, GDP) available from FRED Category 28497.
         </p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <KPICard
           title="Unemployment Rate"
           value={`${stats.currentRate?.toFixed(1) || '-'}%`}
@@ -163,11 +191,29 @@ export default function Economy() {
           color={stats.currentRate > 5 ? 'coral' : 'teal'}
         />
         <KPICard
-          title="5-Year Average"
-          value={`${stats.avg5Year?.toFixed(1) || '-'}%`}
-          subtitle="Mean unemployment rate"
-          icon={TrendingUp}
+          title="Median Home Price"
+          value={`$${formatNumber(stats.latestMedianPrice)}`}
+          subtitle={formatMonth(stats.homePriceMonth)}
+          trend={stats.homePriceYoY}
+          trendLabel="vs same month last year"
+          icon={Home}
           color="navy"
+        />
+        <KPICard
+          title="Avg Home Price"
+          value={`$${formatNumber(stats.latestAvgPrice)}`}
+          subtitle={formatMonth(stats.homePriceMonth)}
+          icon={Home}
+          color="navy"
+        />
+        <KPICard
+          title="Median Household Income"
+          value={`$${formatNumber(stats.latestIncome)}`}
+          subtitle={`${stats.incomeYear} (annual)`}
+          trend={stats.incomeChange}
+          trendLabel="vs previous year"
+          icon={DollarSign}
+          color="teal"
         />
         <KPICard
           title="Active Addresses"
@@ -179,7 +225,7 @@ export default function Economy() {
           color="navy"
         />
         <KPICard
-          title="COVID Peak"
+          title="COVID Peak Unemployment"
           value={`${stats.covidPeak?.rate?.toFixed(1) || '-'}%`}
           subtitle={formatMonth(stats.covidPeak?.month)}
           icon={TrendingDown}
@@ -238,8 +284,98 @@ export default function Economy() {
         </ResponsiveContainer>
       </ChartCard>
 
+      {/* Home Prices Chart */}
+      <ChartCard
+        title="Home Listing Prices"
+        subtitle="Median and average listing prices for Orleans Parish"
+      >
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart data={homePricesData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+            <XAxis
+              dataKey="month"
+              tickFormatter={(val) => {
+                const [year, month] = val.split('-');
+                return month === '01' ? year : '';
+              }}
+              tick={{ fontSize: 11, fill: '#6B7280' }}
+              interval={11}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: '#6B7280' }}
+              width={70}
+              domain={[0, 'auto']}
+              tickFormatter={(val) => `$${(val / 1000).toFixed(0)}K`}
+            />
+            <Tooltip
+              {...tooltipStyle}
+              formatter={(value, name) => [`$${formatNumber(value)}`, name === 'medianPrice' ? 'Median Price' : 'Average Price']}
+              labelFormatter={formatMonth}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="medianPrice"
+              name="Median Price"
+              stroke={COLORS.navy}
+              strokeWidth={2.5}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="avgPrice"
+              name="Average Price"
+              stroke={COLORS.teal}
+              strokeWidth={2}
+              dot={false}
+              strokeDasharray="5 5"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartCard>
+
       {/* Two column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Median Household Income */}
+        <ChartCard
+          title="Median Household Income"
+          subtitle="Annual income for Orleans Parish (FRED)"
+        >
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={householdIncomeData}>
+              <defs>
+                <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={COLORS.teal} stopOpacity={0.3} />
+                  <stop offset="95%" stopColor={COLORS.teal} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+              <XAxis
+                dataKey="year"
+                tick={{ fontSize: 11, fill: '#6B7280' }}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: '#6B7280' }}
+                width={60}
+                domain={[0, 'auto']}
+                tickFormatter={(val) => `$${(val / 1000).toFixed(0)}K`}
+              />
+              <Tooltip
+                {...tooltipStyle}
+                formatter={(value) => [`$${formatNumber(value)}`, 'Median Income']}
+              />
+              <Area
+                type="monotone"
+                dataKey="income"
+                stroke={COLORS.teal}
+                strokeWidth={2}
+                fill="url(#incomeGradient)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
         {/* Active addresses trend */}
         <ChartCard
           title="Active Residential Addresses"
@@ -268,70 +404,10 @@ export default function Economy() {
               <Line
                 type="monotone"
                 dataKey="addresses"
-                stroke={COLORS.teal}
+                stroke={COLORS.coral}
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        {/* Recent comparison */}
-        <ChartCard
-          title="Recent Trends"
-          subtitle="24-month unemployment and housing"
-        >
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={recentData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
-              <XAxis
-                dataKey="month"
-                tickFormatter={formatMonth}
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                interval={5}
-              />
-              <YAxis
-                yAxisId="left"
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={35}
-                domain={[0, 'auto']}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={50}
-                domain={['dataMin - 2000', 'dataMax + 2000']}
-                tickFormatter={(val) => `${(val / 1000).toFixed(0)}K`}
-              />
-              <Tooltip
-                {...tooltipStyle}
-                formatter={(value, name) => {
-                  if (name === 'unemployment') return [`${value}%`, 'Unemployment'];
-                  return [formatNumber(value), 'Addresses'];
-                }}
-                labelFormatter={formatMonth}
-              />
-              <Legend />
-              <Line
-                yAxisId="left"
-                type="monotone"
-                dataKey="unemployment"
-                name="Unemployment %"
-                stroke={COLORS.navy}
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                yAxisId="right"
-                type="monotone"
-                dataKey="addresses"
-                name="Active Addresses"
-                stroke={COLORS.teal}
-                strokeWidth={2}
-                dot={false}
-                strokeDasharray="5 5"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -357,11 +433,7 @@ export default function Economy() {
           The following economic indicators are available from FRED for Orleans Parish, LA
           and could be integrated for a more comprehensive economic dashboard:
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 bg-warm-gray-50 rounded-lg">
-            <div className="text-sm font-medium text-navy-800">Median Household Income</div>
-            <div className="text-xs text-gray-500 mt-1">MHILA22071A052NCEN</div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-warm-gray-50 rounded-lg">
             <div className="text-sm font-medium text-navy-800">Total Population</div>
             <div className="text-xs text-gray-500 mt-1">LAORLE0POP</div>

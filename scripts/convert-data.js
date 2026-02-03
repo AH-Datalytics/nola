@@ -116,6 +116,65 @@ if (existsSync(addressesPath)) {
   console.log('   ⚠ Addresses file not found');
 }
 
+// Convert Home Prices CSV
+console.log('📊 Processing home prices data...');
+const homePricesPath = path.join(rootDir, 'home_prices.csv');
+if (existsSync(homePricesPath)) {
+  const csvContent = readFileSync(homePricesPath, 'utf-8');
+  const lines = csvContent.trim().split('\n');
+  const homePricesData = lines.slice(1)
+    .map(line => {
+      const parts = line.split(',');
+      const monthRaw = parts[0]; // YYYYMM format
+      const year = monthRaw.slice(0, 4);
+      const month = monthRaw.slice(4, 6);
+      const medianPrice = parseFloat(parts[3]) || null;
+      const avgPrice = parseFloat(parts[36]) || null;
+      return {
+        month: `${year}-${month}`,
+        medianPrice,
+        avgPrice
+      };
+    })
+    .filter(row => row.month >= '2015-01' && (row.medianPrice || row.avgPrice))
+    .sort((a, b) => a.month.localeCompare(b.month));
+
+  writeFileSync(
+    path.join(dataDir, 'home-prices.json'),
+    JSON.stringify(homePricesData, null, 2)
+  );
+  console.log(`   ✓ Processed ${homePricesData.length} months of home price data`);
+} else {
+  console.log('   ⚠ Home prices file not found');
+}
+
+// Convert Median Household Income CSV
+console.log('📊 Processing median household income data...');
+const incomePath = path.join(rootDir, 'median_household_income.csv');
+if (existsSync(incomePath)) {
+  const csvContent = readFileSync(incomePath, 'utf-8');
+  const lines = csvContent.trim().split('\n');
+  const incomeData = lines.slice(1)
+    .map(line => {
+      const [date, income] = line.split(',');
+      const year = date.slice(0, 4);
+      return {
+        year: parseInt(year),
+        income: parseInt(income) || null
+      };
+    })
+    .filter(row => row.year >= 2015 && row.income)
+    .sort((a, b) => a.year - b.year);
+
+  writeFileSync(
+    path.join(dataDir, 'household-income.json'),
+    JSON.stringify(incomeData, null, 2)
+  );
+  console.log(`   ✓ Processed ${incomeData.length} years of household income data`);
+} else {
+  console.log('   ⚠ Median household income file not found');
+}
+
 // Convert Parquet file using Python
 console.log('📊 Processing police response time data (parquet)...');
 const parquetPath = path.join(rootDir, 'Call_For_Service_Response_Time.parquet');
