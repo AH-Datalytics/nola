@@ -138,8 +138,8 @@ export default function Overview() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">Operations Overview</h1>
-        <p className="text-gray-500 mt-1">Executive summary of key city metrics</p>
+        <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Operations Overview</h1>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Executive summary of key city metrics</p>
       </div>
 
       {/* KPI Cards */}
@@ -194,14 +194,14 @@ export default function Overview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Murders trend with toggle */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h3 className="font-semibold text-navy-900">Murders</h3>
-              <p className="text-sm text-gray-500 mt-0.5">
+              <h3 className="font-semibold text-navy-900 text-sm lg:text-base">Murders</h3>
+              <p className="text-xs lg:text-sm text-gray-500 mt-0.5">
                 {murdersView === 'monthly' ? 'Monthly count, 24-month view' : '12-month rolling average'}
               </p>
             </div>
-            <div className="flex bg-warm-gray-100 rounded-lg p-1">
+            <div className="flex bg-warm-gray-100 rounded-lg p-1 self-start sm:self-auto">
               <button
                 onClick={() => setMurdersView('monthly')}
                 className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
@@ -224,7 +224,7 @@ export default function Overview() {
               </button>
             </div>
           </div>
-          <div className="p-6">
+          <div className="p-3 lg:p-6">
             <ResponsiveContainer width="100%" height={280}>
               {murdersView === 'monthly' ? (
                 <BarChart data={last24Months}>

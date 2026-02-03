@@ -155,8 +155,8 @@ export default function Murders() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">Murder Statistics</h1>
-        <p className="text-gray-500 mt-1">Homicide trends and analysis for New Orleans</p>
+        <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Murder Statistics</h1>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Homicide trends and analysis for New Orleans</p>
       </div>
 
       {/* KPI Cards */}

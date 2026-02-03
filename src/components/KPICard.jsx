@@ -43,43 +43,43 @@ export default function KPICard({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-pulse">
-        <div className="flex items-start justify-between mb-4">
-          <div className="w-10 h-10 bg-gray-200 rounded-lg" />
-          <div className="w-16 h-5 bg-gray-200 rounded" />
+      <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 animate-pulse">
+        <div className="flex items-start justify-between mb-3 lg:mb-4">
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gray-200 rounded-lg" />
+          <div className="w-14 h-4 lg:w-16 lg:h-5 bg-gray-200 rounded" />
         </div>
-        <div className="w-24 h-8 bg-gray-200 rounded mb-2" />
-        <div className="w-32 h-4 bg-gray-200 rounded" />
+        <div className="w-20 h-6 lg:w-24 lg:h-8 bg-gray-200 rounded mb-2" />
+        <div className="w-28 h-3 lg:w-32 lg:h-4 bg-gray-200 rounded" />
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 card-hover">
-      <div className="flex items-start justify-between mb-4">
+    <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 card-hover">
+      <div className="flex items-start justify-between mb-3 lg:mb-4">
         {Icon && (
-          <div className={`p-2.5 rounded-lg ${iconBgClasses[color]}`}>
-            <Icon className={`w-5 h-5 ${colorClasses[color]}`} />
+          <div className={`p-2 lg:p-2.5 rounded-lg ${iconBgClasses[color]}`}>
+            <Icon className={`w-4 h-4 lg:w-5 lg:h-5 ${colorClasses[color]}`} />
           </div>
         )}
         {trend !== undefined && trend !== null && (
-          <div className={`flex items-center gap-1 text-sm font-medium ${getTrendColor()}`}>
+          <div className={`flex items-center gap-1 text-xs lg:text-sm font-medium ${getTrendColor()}`}>
             {getTrendIcon()}
             <span>{Math.abs(trend).toFixed(1)}%</span>
           </div>
         )}
       </div>
 
-      <div className={`text-3xl font-bold mb-1 ${colorClasses[color]}`}>
+      <div className={`text-2xl lg:text-3xl font-bold mb-1 ${colorClasses[color]}`}>
         {value}
       </div>
 
-      <div className="text-sm text-gray-600 font-medium">{title}</div>
+      <div className="text-xs lg:text-sm text-gray-600 font-medium">{title}</div>
 
-      {subtitle && <div className="text-xs text-gray-400 mt-1">{subtitle}</div>}
+      {subtitle && <div className="text-xs text-gray-400 mt-1 truncate">{subtitle}</div>}
 
       {trendLabel && (
-        <div className="text-xs text-gray-500 mt-2">{trendLabel}</div>
+        <div className="text-xs text-gray-500 mt-2 hidden sm:block">{trendLabel}</div>
       )}
     </div>
   );

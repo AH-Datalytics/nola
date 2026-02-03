@@ -129,8 +129,8 @@ export default function PoliceResponse() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-navy-900">Police Response Times</h1>
-        <p className="text-gray-500 mt-1">Call for service response analysis (dispatch to arrival)</p>
+        <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Police Response Times</h1>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Call for service response analysis (dispatch to arrival)</p>
       </div>
 
       {/* Context banner */}
@@ -183,17 +183,17 @@ export default function PoliceResponse() {
 
       {/* Main trend chart */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h3 className="font-semibold text-navy-900">Response Time Trend</h3>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h3 className="font-semibold text-navy-900 text-sm lg:text-base">Response Time Trend</h3>
+            <p className="text-xs lg:text-sm text-gray-500 mt-0.5">
               {metricLabels[metricType]} minutes by priority level, 24-month view
             </p>
           </div>
-          <div className="flex bg-warm-gray-100 rounded-lg p-1">
+          <div className="flex bg-warm-gray-100 rounded-lg p-1 self-start sm:self-auto">
             <button
               onClick={() => setMetricType('median')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium rounded-md transition-colors ${
                 metricType === 'median'
                   ? 'bg-white text-navy-900 shadow-sm'
                   : 'text-gray-600 hover:text-navy-900'
@@ -203,27 +203,27 @@ export default function PoliceResponse() {
             </button>
             <button
               onClick={() => setMetricType('mean')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium rounded-md transition-colors ${
                 metricType === 'mean'
                   ? 'bg-white text-navy-900 shadow-sm'
                   : 'text-gray-600 hover:text-navy-900'
               }`}
             >
-              Average
+              Avg
             </button>
             <button
               onClick={() => setMetricType('p90')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              className={`px-2 lg:px-3 py-1 lg:py-1.5 text-xs lg:text-sm font-medium rounded-md transition-colors ${
                 metricType === 'p90'
                   ? 'bg-white text-navy-900 shadow-sm'
                   : 'text-gray-600 hover:text-navy-900'
               }`}
             >
-              90th %ile
+              90th
             </button>
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-3 lg:p-6">
         <ResponsiveContainer width="100%" height={320}>
           <LineChart data={trendData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />

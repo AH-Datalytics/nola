@@ -201,8 +201,8 @@ export default function ThreeOneOne() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">311 Service Requests</h1>
-          <p className="text-gray-500 mt-1">Pothole and infrastructure requests</p>
+          <h1 className="text-xl lg:text-2xl font-bold text-navy-900">311 Service Requests</h1>
+          <p className="text-gray-500 mt-1 text-sm lg:text-base">Pothole and infrastructure requests</p>
         </div>
         <div className="bg-coral-50 border border-coral-200 rounded-lg p-6 text-center">
           <AlertCircle className="w-12 h-12 text-coral-500 mx-auto mb-4" />
@@ -221,14 +221,14 @@ export default function ThreeOneOne() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">311 Service Requests</h1>
-          <p className="text-gray-500 mt-1">Pothole and roadway infrastructure tracking</p>
+          <h1 className="text-xl lg:text-2xl font-bold text-navy-900">311 Service Requests</h1>
+          <p className="text-gray-500 mt-1 text-sm lg:text-base">Pothole and roadway infrastructure tracking</p>
         </div>
         <div className="flex items-center gap-3">
           {lastRefresh && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 hidden sm:inline">
               Last updated: {lastRefresh.toLocaleTimeString()}
             </span>
           )}
