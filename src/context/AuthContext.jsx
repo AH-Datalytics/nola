@@ -3,8 +3,8 @@ import { createContext, useContext, useState } from 'react';
 const AuthContext = createContext(null);
 
 const USERS = {
-  admin: { password: 'admin123', role: 'admin', name: 'Administrator' },
-  viewer: { password: 'viewer123', role: 'viewer', name: 'Viewer' },
+  admin: { password: 'nola-admin', role: 'admin', name: 'Administrator' },
+  viewer: { password: 'nola-viewer', role: 'viewer', name: 'Viewer' },
 };
 
 export function AuthProvider({ children }) {

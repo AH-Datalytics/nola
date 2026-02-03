@@ -143,8 +143,8 @@ export default function Login() {
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
-              Demo credentials: <span className="font-medium">admin / admin123</span> or{' '}
-              <span className="font-medium">viewer / viewer123</span>
+              Demo credentials: <span className="font-medium">admin / nola-admin</span> or{' '}
+              <span className="font-medium">viewer / nola-viewer</span>
             </p>
           </div>
         </div>
