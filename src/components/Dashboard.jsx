@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -28,6 +28,48 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  // Handle swipe gestures for mobile sidebar
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e) => {
+      if (touchStartX.current === null) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartX.current;
+      const deltaY = Math.abs(touchEndY - touchStartY.current);
+
+      // Only trigger if horizontal swipe is more significant than vertical
+      if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > 50) {
+        // Swipe right from left edge (within 30px) - open sidebar
+        if (deltaX > 0 && touchStartX.current < 30 && !sidebarOpen) {
+          setSidebarOpen(true);
+        }
+        // Swipe left - close sidebar
+        if (deltaX < 0 && sidebarOpen) {
+          setSidebarOpen(false);
+        }
+      }
+
+      touchStartX.current = null;
+      touchStartY.current = null;
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [sidebarOpen]);
 
   const handleLogout = () => {
     logout();
@@ -39,7 +81,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-warm-gray-50">
+    <div className="flex min-h-screen bg-warm-gray-50 touch-pan-y">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
