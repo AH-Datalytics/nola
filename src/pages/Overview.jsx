@@ -11,22 +11,22 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { AlertTriangle, Timer, Construction, Briefcase, Home } from 'lucide-react';
+import { AlertTriangle, Timer, Construction, Briefcase, Users } from 'lucide-react';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import { COLORS, tooltipStyle, formatMonth, formatNumber } from '../utils/chartConfig';
 
 // Import static data
-import murdersData from '../data/murders.json';
+import crimesData from '../data/crimes.json';
 import responseTimesData from '../data/response-times.json';
 import unemploymentData from '../data/unemployment.json';
-import addressesData from '../data/addresses.json';
+import populationData from '../data/population.json';
 
 export default function Overview() {
   const [potholeData, setPotholeData] = useState(null);
   const [potholeLoading, setPotholeLoading] = useState(true);
   const [potholeError, setPotholeError] = useState(null);
-  const [murdersView, setMurdersView] = useState('monthly'); // 'monthly' or 'rolling'
+  const [crimesView, setCrimesView] = useState('monthly'); // 'monthly' or 'rolling'
 
   // Fetch 311 pothole data
   useEffect(() => {
@@ -71,20 +71,20 @@ export default function Overview() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
 
-  // Murders YTD
-  const murdersYTD = murdersData
+  // Crimes YTD
+  const crimesYTD = crimesData
     .filter(d => d.month.startsWith(`${currentYear}`))
     .reduce((sum, d) => sum + (d.murders || 0), 0);
 
-  const lastYearMurdersYTD = murdersData
+  const lastYearCrimesYTD = crimesData
     .filter(d => {
       const [year, month] = d.month.split('-');
       return parseInt(year) === currentYear - 1 && parseInt(month) <= currentMonth;
     })
     .reduce((sum, d) => sum + (d.murders || 0), 0);
 
-  const murdersTrend = lastYearMurdersYTD > 0
-    ? ((murdersYTD - lastYearMurdersYTD) / lastYearMurdersYTD) * 100
+  const crimesTrend = lastYearCrimesYTD > 0
+    ? ((crimesYTD - lastYearCrimesYTD) / lastYearCrimesYTD) * 100
     : 0;
 
   // Response time
@@ -104,25 +104,21 @@ export default function Overview() {
     ? ((latestUnemployment.rate - prevUnemployment.rate) / prevUnemployment.rate) * 100
     : 0;
 
-  // Addresses (population proxy)
-  const latestAddresses = addressesData[addressesData.length - 1];
-  const prevYearAddresses = addressesData.find(d => {
-    const [year, month] = d.month.split('-');
-    const [latestYear, latestMonth] = latestAddresses.month.split('-');
-    return parseInt(year) === parseInt(latestYear) - 1 && month === latestMonth;
-  });
-  const addressesTrend = prevYearAddresses?.addresses
-    ? ((latestAddresses.addresses - prevYearAddresses.addresses) / prevYearAddresses.addresses) * 100
+  // Population
+  const latestPopulation = populationData[populationData.length - 1];
+  const prevPopulation = populationData[populationData.length - 2];
+  const populationTrend = prevPopulation?.population
+    ? ((latestPopulation.population - prevPopulation.population) / prevPopulation.population) * 100
     : 0;
 
   // Prepare chart data - last 24 months
-  const last24Months = murdersData.slice(-24).map(d => ({
+  const last24Months = crimesData.slice(-24).map(d => ({
     month: d.month,
     murders: d.murders
   }));
 
-  // 12-month rolling average for murders (need more data for calculation)
-  const murdersRolling = murdersData.slice(-36).map((d, i, arr) => {
+  // 12-month rolling average for crimes (need more data for calculation)
+  const crimesRolling = crimesData.slice(-36).map((d, i, arr) => {
     if (i < 11) return { month: d.month, rolling: null };
     const window = arr.slice(i - 11, i + 1);
     const avg = window.reduce((sum, w) => sum + (w.murders || 0), 0) / 12;
@@ -146,10 +142,10 @@ export default function Overview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <KPICard
           title="Murders YTD"
-          value={murdersYTD}
+          value={crimesYTD}
           subtitle={`${currentYear} through ${new Date().toLocaleString('default', { month: 'short' })}`}
-          trend={murdersTrend}
-          trendLabel={`vs ${lastYearMurdersYTD} same period last year`}
+          trend={crimesTrend}
+          trendLabel={`vs ${lastYearCrimesYTD} same period last year`}
           icon={AlertTriangle}
           color="coral"
         />
@@ -180,32 +176,32 @@ export default function Overview() {
           color="teal"
         />
         <KPICard
-          title="Active Addresses"
-          value={formatNumber(latestAddresses?.addresses)}
-          subtitle="Residential addresses receiving mail"
-          trend={addressesTrend}
-          trendLabel="vs same month last year"
-          icon={Home}
+          title="Population"
+          value={`${(latestPopulation?.population / 1000).toFixed(0)}K`}
+          subtitle={`${latestPopulation?.year} estimate`}
+          trend={populationTrend}
+          trendLabel="vs previous year"
+          icon={Users}
           color="navy"
         />
       </div>
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Murders trend with toggle */}
+        {/* Crimes trend with toggle */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <h3 className="font-semibold text-navy-900 text-sm lg:text-base">Murders</h3>
               <p className="text-xs lg:text-sm text-gray-500 mt-0.5">
-                {murdersView === 'monthly' ? 'Monthly count, 24-month view' : '12-month rolling average'}
+                {crimesView === 'monthly' ? 'Monthly count, 24-month view' : '12-month rolling average'}
               </p>
             </div>
             <div className="flex bg-warm-gray-100 rounded-lg p-1 self-start sm:self-auto">
               <button
-                onClick={() => setMurdersView('monthly')}
+                onClick={() => setCrimesView('monthly')}
                 className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
-                  murdersView === 'monthly'
+                  crimesView === 'monthly'
                     ? 'bg-white text-navy-900 shadow-sm'
                     : 'text-gray-600 hover:text-navy-900'
                 }`}
@@ -213,9 +209,9 @@ export default function Overview() {
                 Monthly
               </button>
               <button
-                onClick={() => setMurdersView('rolling')}
+                onClick={() => setCrimesView('rolling')}
                 className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
-                  murdersView === 'rolling'
+                  crimesView === 'rolling'
                     ? 'bg-white text-navy-900 shadow-sm'
                     : 'text-gray-600 hover:text-navy-900'
                 }`}
@@ -226,7 +222,7 @@ export default function Overview() {
           </div>
           <div className="p-3 lg:p-6">
             <ResponsiveContainer width="100%" height={280}>
-              {murdersView === 'monthly' ? (
+              {crimesView === 'monthly' ? (
                 <BarChart data={last24Months}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
                   <XAxis
@@ -252,7 +248,7 @@ export default function Overview() {
                   />
                 </BarChart>
               ) : (
-                <LineChart data={murdersRolling}>
+                <LineChart data={crimesRolling}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
                   <XAxis
                     dataKey="month"

@@ -12,56 +12,39 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
-import { TrendingUp, TrendingDown, Home, Briefcase, DollarSign, Users } from 'lucide-react';
+import { Home, Briefcase, DollarSign, Users, Building } from 'lucide-react';
 import KPICard from '../components/KPICard';
 import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
 import { COLORS, tooltipStyle, formatMonth, formatNumber, formatPercent } from '../utils/chartConfig';
 
 import unemploymentData from '../data/unemployment.json';
-import addressesData from '../data/addresses.json';
 import homePricesData from '../data/home-prices.json';
 import householdIncomeData from '../data/household-income.json';
+import populationData from '../data/population.json';
+import addressesData from '../data/addresses.json';
 
 export default function Economy() {
   // Calculate statistics
   const stats = useMemo(() => {
-    const latest = unemploymentData[unemploymentData.length - 1];
-    const prev = unemploymentData[unemploymentData.length - 2];
-    const yearAgo = unemploymentData.find(d => {
+    // Unemployment
+    const latestUnemployment = unemploymentData[unemploymentData.length - 1];
+    const prevUnemployment = unemploymentData[unemploymentData.length - 2];
+    const yearAgoUnemployment = unemploymentData.find(d => {
       const [y, m] = d.month.split('-');
-      const [ly, lm] = latest.month.split('-');
+      const [ly, lm] = latestUnemployment.month.split('-');
       return parseInt(y) === parseInt(ly) - 1 && m === lm;
     });
-
-    const latestAddresses = addressesData[addressesData.length - 1];
-    const yearAgoAddresses = addressesData.find(d => {
-      const [y, m] = d.month.split('-');
-      const [ly, lm] = latestAddresses.month.split('-');
-      return parseInt(y) === parseInt(ly) - 1 && m === lm;
-    });
-
-    // COVID peak
-    const covidPeak = unemploymentData.reduce((max, d) =>
-      (d.rate || 0) > (max?.rate || 0) ? d : max
-    , null);
-
-    // Pre-COVID baseline (Feb 2020)
-    const preCovid = unemploymentData.find(d => d.month === '2020-02');
-
-    // Calculate 5-year average
-    const last5Years = unemploymentData.slice(-60);
-    const avg5Year = last5Years.reduce((sum, d) => sum + (d.rate || 0), 0) / last5Years.length;
 
     // Home prices
     const latestHomePrice = homePricesData[homePricesData.length - 1];
     const yearAgoHomePrice = homePricesData.find(d => {
       const [y, m] = d.month.split('-');
-      const [ly, lm] = latestHomePrice.month.split('-');
+      const [ly, lm] = latestHomePrice?.month?.split('-') || [];
       return parseInt(y) === parseInt(ly) - 1 && m === lm;
     });
-    const homePriceYoY = yearAgoHomePrice?.medianPrice
-      ? ((latestHomePrice.medianPrice - yearAgoHomePrice.medianPrice) / yearAgoHomePrice.medianPrice) * 100
+    const avgPriceYoY = yearAgoHomePrice?.avgPrice
+      ? ((latestHomePrice.avgPrice - yearAgoHomePrice.avgPrice) / yearAgoHomePrice.avgPrice) * 100
       : 0;
 
     // Household income
@@ -71,26 +54,40 @@ export default function Economy() {
       ? ((latestIncome.income - prevIncome.income) / prevIncome.income) * 100
       : 0;
 
+    // Population
+    const latestPopulation = populationData[populationData.length - 1];
+    const prevPopulation = populationData[populationData.length - 2];
+    const populationChange = prevPopulation?.population
+      ? ((latestPopulation?.population - prevPopulation?.population) / prevPopulation?.population) * 100
+      : 0;
+
+    // Addresses
+    const latestAddresses = addressesData[addressesData.length - 1];
+    const yearAgoAddresses = addressesData.find(d => {
+      const [y, m] = d.month.split('-');
+      const [ly, lm] = latestAddresses?.month?.split('-') || [];
+      return parseInt(y) === parseInt(ly) - 1 && m === lm;
+    });
+    const addressesYoY = yearAgoAddresses?.addresses
+      ? ((latestAddresses.addresses - yearAgoAddresses.addresses) / yearAgoAddresses.addresses) * 100
+      : 0;
+
     return {
-      currentRate: latest?.rate,
-      currentMonth: latest?.month,
-      monthlyChange: prev?.rate ? latest.rate - prev.rate : 0,
-      yearlyChange: yearAgo?.rate ? latest.rate - yearAgo.rate : 0,
-      covidPeak,
-      preCovid,
-      avg5Year,
-      latestAddresses: latestAddresses?.addresses,
-      addressMonth: latestAddresses?.month,
-      addressYoY: yearAgoAddresses?.addresses
-        ? ((latestAddresses.addresses - yearAgoAddresses.addresses) / yearAgoAddresses.addresses) * 100
-        : 0,
-      latestMedianPrice: latestHomePrice?.medianPrice,
+      currentRate: latestUnemployment?.rate,
+      currentMonth: latestUnemployment?.month,
+      yearlyChange: yearAgoUnemployment?.rate ? latestUnemployment.rate - yearAgoUnemployment.rate : 0,
       latestAvgPrice: latestHomePrice?.avgPrice,
       homePriceMonth: latestHomePrice?.month,
-      homePriceYoY,
+      avgPriceYoY,
       latestIncome: latestIncome?.income,
       incomeYear: latestIncome?.year,
       incomeChange,
+      latestPopulation: latestPopulation?.population,
+      populationYear: latestPopulation?.year,
+      populationChange,
+      latestAddresses: latestAddresses?.addresses,
+      addressesMonth: latestAddresses?.month,
+      addressesYoY,
     };
   }, []);
 
@@ -102,64 +99,89 @@ export default function Economy() {
     }));
   }, []);
 
+  // 5-year average for reference line
+  const avg5Year = useMemo(() => {
+    const last5Years = unemploymentData.slice(-60);
+    return last5Years.reduce((sum, d) => sum + (d.rate || 0), 0) / last5Years.length;
+  }, []);
+
+  // Addresses chart data - yearly averages (all available years)
   const addressesChartData = useMemo(() => {
-    return addressesData.slice(-60).map(d => ({
-      month: d.month,
-      addresses: d.addresses,
-    }));
-  }, []);
-
-  // Combined chart for recent data
-  const recentData = useMemo(() => {
-    const last24Unemployment = unemploymentData.slice(-24);
-    return last24Unemployment.map(u => {
-      const addressEntry = addressesData.find(a => a.month === u.month);
-      return {
-        month: u.month,
-        unemployment: u.rate,
-        addresses: addressEntry?.addresses,
-      };
+    const yearlyData = {};
+    addressesData.forEach(d => {
+      const year = parseInt(d.month.split('-')[0]);
+      if (!yearlyData[year]) yearlyData[year] = [];
+      if (d.addresses) yearlyData[year].push(d.addresses);
     });
+
+    return Object.entries(yearlyData)
+      .map(([year, values]) => ({
+        year: parseInt(year),
+        addresses: Math.round(values.reduce((a, b) => a + b, 0) / values.length),
+      }))
+      .sort((a, b) => a.year - b.year);
   }, []);
 
-  // Annual summary table
+  // Annual summary table with all data
   const annualData = useMemo(() => {
     const years = {};
+
+    // Initialize years from 2015+
+    for (let y = 2015; y <= new Date().getFullYear(); y++) {
+      years[y] = { rates: [], addresses: [], homePrices: [] };
+    }
+
+    // Unemployment data
     unemploymentData.forEach(d => {
-      const year = d.month.split('-')[0];
-      if (parseInt(year) >= 2015) {
-        if (!years[year]) years[year] = { rates: [], addresses: [] };
-        if (d.rate) years[year].rates.push(d.rate);
-      }
+      const year = parseInt(d.month.split('-')[0]);
+      if (years[year] && d.rate) years[year].rates.push(d.rate);
     });
+
+    // Addresses data
     addressesData.forEach(d => {
-      const year = d.month.split('-')[0];
-      if (years[year] && d.addresses) {
-        years[year].addresses.push(d.addresses);
-      }
+      const year = parseInt(d.month.split('-')[0]);
+      if (years[year] && d.addresses) years[year].addresses.push(d.addresses);
+    });
+
+    // Home prices data
+    homePricesData.forEach(d => {
+      const year = parseInt(d.month.split('-')[0]);
+      if (years[year] && d.medianPrice) years[year].homePrices.push(d.medianPrice);
     });
 
     return Object.entries(years)
-      .map(([year, data]) => ({
-        year,
-        avgRate: data.rates.length > 0
-          ? (data.rates.reduce((a, b) => a + b, 0) / data.rates.length).toFixed(1)
-          : '-',
-        maxRate: data.rates.length > 0 ? Math.max(...data.rates).toFixed(1) : '-',
-        minRate: data.rates.length > 0 ? Math.min(...data.rates).toFixed(1) : '-',
-        avgAddresses: data.addresses.length > 0
-          ? Math.round(data.addresses.reduce((a, b) => a + b, 0) / data.addresses.length)
-          : '-',
-      }))
+      .map(([year, data]) => {
+        // Find population for this year
+        const popEntry = populationData.find(p => p.year === parseInt(year));
+        // Find income for this year
+        const incomeEntry = householdIncomeData.find(i => i.year === parseInt(year));
+
+        return {
+          year: parseInt(year),
+          avgUnemployment: data.rates.length > 0
+            ? parseFloat((data.rates.reduce((a, b) => a + b, 0) / data.rates.length).toFixed(1))
+            : '-',
+          avgHomePrice: data.homePrices.length > 0
+            ? Math.round(data.homePrices.reduce((a, b) => a + b, 0) / data.homePrices.length)
+            : '-',
+          householdIncome: incomeEntry?.income || '-',
+          population: popEntry?.population || '-',
+          avgAddresses: data.addresses.length > 0
+            ? Math.round(data.addresses.reduce((a, b) => a + b, 0) / data.addresses.length)
+            : '-',
+        };
+      })
+      .filter(d => d.year >= 2015)
       .reverse();
   }, []);
 
   const tableColumns = [
     { key: 'year', header: 'Year' },
-    { key: 'avgRate', header: 'Avg Unemployment %', align: 'right' },
-    { key: 'minRate', header: 'Low', align: 'right' },
-    { key: 'maxRate', header: 'High', align: 'right' },
-    { key: 'avgAddresses', header: 'Avg Addresses', align: 'right', render: (val) => typeof val === 'number' ? formatNumber(val) : val },
+    { key: 'avgUnemployment', header: 'Unemployment %', align: 'right' },
+    { key: 'avgHomePrice', header: 'Avg Home Price', align: 'right', render: (val) => val !== '-' ? `$${formatNumber(val)}` : '-' },
+    { key: 'householdIncome', header: 'Household Income', align: 'right', render: (val) => val !== '-' ? `$${formatNumber(val)}` : '-' },
+    { key: 'population', header: 'Population', align: 'right', render: (val) => val !== '-' ? formatNumber(val) : '-' },
+    { key: 'avgAddresses', header: 'Addresses', align: 'right', render: (val) => val !== '-' ? formatNumber(val) : '-' },
   ];
 
   return (
@@ -172,15 +194,16 @@ export default function Economy() {
       {/* Data sources note */}
       <div className="bg-warm-gray-100 border border-warm-gray-200 rounded-lg p-4">
         <p className="text-sm text-gray-600">
-          <strong>Data Sources:</strong> Unemployment rate from FRED (LAORLE0URN).
-          Median household income from FRED (MHILA22071A052NCEN).
-          Home prices from Realtor.com via Econdata.
-          Active residential addresses from USPS delivery data via The Data Center.
+          <strong>Data Sources:</strong> Unemployment from FRED (LAORLE0URN).
+          Household income from FRED (MHILA22071A052NCEN).
+          Home prices from Realtor.com.
+          Population from FRED (LAORLE0POP).
+          Active addresses from USPS via The Data Center.
         </p>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      {/* KPI Cards - 5 cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <KPICard
           title="Unemployment Rate"
           value={`${stats.currentRate?.toFixed(1) || '-'}%`}
@@ -191,18 +214,11 @@ export default function Economy() {
           color={stats.currentRate > 5 ? 'coral' : 'teal'}
         />
         <KPICard
-          title="Median Home Price"
-          value={`$${formatNumber(stats.latestMedianPrice)}`}
-          subtitle={formatMonth(stats.homePriceMonth)}
-          trend={stats.homePriceYoY}
-          trendLabel="vs same month last year"
-          icon={Home}
-          color="navy"
-        />
-        <KPICard
           title="Avg Home Price"
-          value={`$${formatNumber(stats.latestAvgPrice)}`}
+          value={stats.latestAvgPrice ? `$${formatNumber(stats.latestAvgPrice)}` : '-'}
           subtitle={formatMonth(stats.homePriceMonth)}
+          trend={stats.avgPriceYoY}
+          trendLabel="vs same month last year"
           icon={Home}
           color="navy"
         />
@@ -213,23 +229,25 @@ export default function Economy() {
           trend={stats.incomeChange}
           trendLabel="vs previous year"
           icon={DollarSign}
-          color="teal"
+          color="coral"
+        />
+        <KPICard
+          title="Population"
+          value={stats.latestPopulation ? `${(stats.latestPopulation / 1000).toFixed(0)}K` : '-'}
+          subtitle={stats.populationYear ? `${stats.populationYear} (annual)` : 'Data not loaded'}
+          trend={stats.populationChange || null}
+          trendLabel={stats.populationChange ? "vs previous year" : undefined}
+          icon={Users}
+          color="navy"
         />
         <KPICard
           title="Active Addresses"
           value={formatNumber(stats.latestAddresses)}
-          subtitle={formatMonth(stats.addressMonth)}
-          trend={stats.addressYoY}
+          subtitle={formatMonth(stats.addressesMonth)}
+          trend={stats.addressesYoY}
           trendLabel="vs same month last year"
-          icon={Home}
-          color="navy"
-        />
-        <KPICard
-          title="COVID Peak Unemployment"
-          value={`${stats.covidPeak?.rate?.toFixed(1) || '-'}%`}
-          subtitle={formatMonth(stats.covidPeak?.month)}
-          icon={TrendingDown}
-          color="coral"
+          icon={Building}
+          color="gold"
         />
       </div>
 
@@ -268,7 +286,7 @@ export default function Economy() {
               labelFormatter={formatMonth}
             />
             <ReferenceLine
-              y={stats.avg5Year}
+              y={avg5Year}
               stroke={COLORS.gold}
               strokeDasharray="5 5"
               label={{ value: '5yr avg', fill: COLORS.gold, fontSize: 10 }}
@@ -309,14 +327,14 @@ export default function Economy() {
             />
             <Tooltip
               {...tooltipStyle}
-              formatter={(value, name) => [`$${formatNumber(value)}`, name === 'medianPrice' ? 'Median Price' : 'Average Price']}
+              formatter={(value, name) => [`$${formatNumber(value)}`, name === 'medianPrice' ? 'Median Listing Price' : 'Average Listing Price']}
               labelFormatter={formatMonth}
             />
             <Legend />
             <Line
               type="monotone"
               dataKey="medianPrice"
-              name="Median Price"
+              name="Median Listing Price"
               stroke={COLORS.navy}
               strokeWidth={2.5}
               dot={false}
@@ -325,7 +343,7 @@ export default function Economy() {
             <Line
               type="monotone"
               dataKey="avgPrice"
-              name="Average Price"
+              name="Average Listing Price"
               stroke={COLORS.teal}
               strokeWidth={2}
               dot={false}
@@ -376,43 +394,89 @@ export default function Economy() {
           </ResponsiveContainer>
         </ChartCard>
 
-        {/* Active addresses trend */}
+        {/* Population trend */}
         <ChartCard
-          title="Active Residential Addresses"
-          subtitle="Orleans Parish housing occupancy proxy"
+          title="Population"
+          subtitle="Orleans Parish annual population (FRED)"
         >
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={addressesChartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
-              <XAxis
-                dataKey="month"
-                tickFormatter={formatMonth}
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                interval="preserveStartEnd"
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                width={55}
-                domain={['dataMin - 5000', 'dataMax + 5000']}
-                tickFormatter={(val) => `${(val / 1000).toFixed(0)}K`}
-              />
-              <Tooltip
-                {...tooltipStyle}
-                formatter={(value) => [formatNumber(value), 'Addresses']}
-                labelFormatter={formatMonth}
-              />
-              <Line
-                type="monotone"
-                dataKey="addresses"
-                stroke={COLORS.coral}
-                strokeWidth={2}
-                dot={false}
-                activeDot={{ r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {populationData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={populationData}>
+                <defs>
+                  <linearGradient id="populationGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={COLORS.coral} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={COLORS.coral} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+                <XAxis
+                  dataKey="year"
+                  tick={{ fontSize: 11, fill: '#6B7280' }}
+                />
+                <YAxis
+                  tick={{ fontSize: 11, fill: '#6B7280' }}
+                  width={55}
+                  domain={[0, 'auto']}
+                  tickFormatter={(val) => `${(val / 1000).toFixed(0)}K`}
+                />
+                <Tooltip
+                  {...tooltipStyle}
+                  formatter={(value) => [formatNumber(value), 'Population']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="population"
+                  stroke={COLORS.coral}
+                  strokeWidth={2}
+                  fill="url(#populationGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-[280px] flex items-center justify-center text-gray-500">
+              <div className="text-center">
+                <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p className="text-sm">Population data not loaded</p>
+                <p className="text-xs mt-1">Add population.csv to the data folder</p>
+              </div>
+            </div>
+          )}
         </ChartCard>
       </div>
+
+      {/* Active Residential Addresses */}
+      <ChartCard
+        title="Active Residential Addresses"
+        subtitle="Orleans Parish yearly average (2015-present)"
+      >
+        <ResponsiveContainer width="100%" height={280}>
+          <LineChart data={addressesChartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+            <XAxis
+              dataKey="year"
+              tick={{ fontSize: 11, fill: '#6B7280' }}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: '#6B7280' }}
+              width={55}
+              domain={[0, 'auto']}
+              tickFormatter={(val) => `${(val / 1000).toFixed(0)}K`}
+            />
+            <Tooltip
+              {...tooltipStyle}
+              formatter={(value) => [formatNumber(value), 'Avg Addresses']}
+            />
+            <Line
+              type="monotone"
+              dataKey="addresses"
+              stroke={COLORS.gold}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </ChartCard>
 
       {/* Annual summary table */}
       <ChartCard
@@ -423,31 +487,9 @@ export default function Economy() {
           columns={tableColumns}
           data={annualData}
           maxHeight="400px"
+          sortable
         />
       </ChartCard>
-
-      {/* Additional FRED data note */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="font-semibold text-navy-900 mb-3">Additional Data Available</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          The following economic indicators are available from FRED for Orleans Parish, LA
-          and could be integrated for a more comprehensive economic dashboard:
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 bg-warm-gray-50 rounded-lg">
-            <div className="text-sm font-medium text-navy-800">Total Population</div>
-            <div className="text-xs text-gray-500 mt-1">LAORLE0POP</div>
-          </div>
-          <div className="p-4 bg-warm-gray-50 rounded-lg">
-            <div className="text-sm font-medium text-navy-800">GDP All Industries</div>
-            <div className="text-xs text-gray-500 mt-1">GDPALL22071</div>
-          </div>
-          <div className="p-4 bg-warm-gray-50 rounded-lg">
-            <div className="text-sm font-medium text-navy-800">Labor Force</div>
-            <div className="text-xs text-gray-500 mt-1">LAORLE0LF</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

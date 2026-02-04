@@ -3,7 +3,7 @@ import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './components/Dashboard';
 import Overview from './pages/Overview';
-import Murders from './pages/Murders';
+import Crime from './pages/Crime';
 import PoliceResponse from './pages/PoliceResponse';
 import ThreeOneOne from './pages/ThreeOneOne';
 import Economy from './pages/Economy';
@@ -41,7 +41,7 @@ function App() {
         }
       >
         <Route index element={<Overview />} />
-        <Route path="murders" element={<Murders />} />
+        <Route path="crime" element={<Crime />} />
         <Route path="response-times" element={<PoliceResponse />} />
         <Route path="311" element={<ThreeOneOne />} />
         <Route path="economy" element={<Economy />} />

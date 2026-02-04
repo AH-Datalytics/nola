@@ -17,18 +17,18 @@ import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
 import { COLORS, CHART_COLORS, tooltipStyle, formatMonth, formatMonthFull } from '../utils/chartConfig';
 
-import murdersData from '../data/murders.json';
+import crimesData from '../data/crimes.json';
 
-export default function Murders() {
+export default function Crime() {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
   const [trendView, setTrendView] = useState('monthly'); // 'monthly' or 'rolling'
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const currentYearData = murdersData.filter(d => d.month.startsWith(`${currentYear}`));
-    const lastYearData = murdersData.filter(d => d.month.startsWith(`${currentYear - 1}`));
-    const twoYearsAgoData = murdersData.filter(d => d.month.startsWith(`${currentYear - 2}`));
+    const currentYearData = crimesData.filter(d => d.month.startsWith(`${currentYear}`));
+    const lastYearData = crimesData.filter(d => d.month.startsWith(`${currentYear - 1}`));
+    const twoYearsAgoData = crimesData.filter(d => d.month.startsWith(`${currentYear - 2}`));
 
     const ytd = currentYearData.reduce((sum, d) => sum + (d.murders || 0), 0);
     const lastYearYtd = lastYearData
@@ -65,12 +65,12 @@ export default function Murders() {
 
     return months.map((m, i) => {
       const monthNum = parseInt(m);
-      const currentYearEntry = murdersData.find(d => d.month === `${currentYear}-${m}`);
-      const lastYearVal = murdersData.find(d => d.month === `${currentYear - 1}-${m}`)?.murders ?? 0;
-      const twoYearsVal = murdersData.find(d => d.month === `${currentYear - 2}-${m}`)?.murders ?? 0;
+      const currentYearEntry = crimesData.find(d => d.month === `${currentYear}-${m}`);
+      const lastYearVal = crimesData.find(d => d.month === `${currentYear - 1}-${m}`)?.murders ?? 0;
+      const twoYearsVal = crimesData.find(d => d.month === `${currentYear - 2}-${m}`)?.murders ?? 0;
 
       // Only show current year data for months that have data (not future months)
-      const currentYearVal = currentYearEntry ? currentYearEntry.murders : null;
+      const currentYearVal = currentYearEntry ? currentYearEntry.crimes : null;
 
       return {
         month: monthNames[i],
@@ -81,64 +81,67 @@ export default function Murders() {
     });
   }, [currentYear]);
 
-  // Cumulative comparison data
+  // Cumulative comparison data (2025 vs 2024 since 2026 just started)
   const cumulativeData = useMemo(() => {
     const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    let currentCumulative = 0;
-    let lastCumulative = 0;
+    let cumulative2025 = 0;
+    let cumulative2024 = 0;
 
     return months.map((m, i) => {
-      const currentYearEntry = murdersData.find(d => d.month === `${currentYear}-${m}`);
-      const lastYearVal = murdersData.find(d => d.month === `${currentYear - 1}-${m}`)?.murders ?? 0;
+      const entry2025 = crimesData.find(d => d.month === `2025-${m}`);
+      const val2024 = crimesData.find(d => d.month === `2024-${m}`)?.murders ?? 0;
 
-      if (currentYearEntry) currentCumulative += currentYearEntry.murders;
-      lastCumulative += lastYearVal;
+      if (entry2025) cumulative2025 += entry2025.murders;
+      cumulative2024 += val2024;
 
       return {
         month: monthNames[i],
-        currentCumulative: currentYearEntry ? currentCumulative : null,
-        lastYearCumulative: lastCumulative,
+        cumulative2025: entry2025 ? cumulative2025 : null,
+        cumulative2024,
       };
     });
-  }, [currentYear]);
+  }, []);
 
   // Long-term trend (10 years)
   const longTermData = useMemo(() => {
-    return murdersData.slice(-120); // Last 10 years
+    return crimesData.slice(-120); // Last 10 years
   }, []);
 
   // 12-month rolling average
   const rollingData = useMemo(() => {
-    const data = murdersData.slice(-120);
-    return data.map((d, i) => {
-      if (i < 11) return { month: d.month, rolling: null };
-      const window = data.slice(i - 11, i + 1);
-      const avg = window.reduce((sum, w) => sum + (w.murders || 0), 0) / 12;
-      return { month: d.month, rolling: parseFloat(avg.toFixed(1)) };
-    });
+    const data = crimesData.slice(-120);
+    return data
+      .map((d, i) => {
+        if (i < 11) return null; // Need 12 months for rolling average
+        const window = data.slice(i - 11, i + 1);
+        const avg = window.reduce((sum, w) => sum + (w.murders || 0), 0) / 12;
+        return { month: d.month, rolling: parseFloat(avg.toFixed(1)) };
+      })
+      .filter(d => d !== null);
   }, []);
 
-  // Monthly table data for current year
+  // Monthly table data (2025 vs 2024)
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const tableData = useMemo(() => {
-    return murdersData
-      .filter(d => d.month.startsWith(`${currentYear}`))
+    return crimesData
+      .filter(d => d.month.startsWith('2025'))
       .map(d => ({
-        month: formatMonthFull(d.month),
-        murders: d.murders,
-        lastYear: murdersData.find(m => m.month === `${currentYear - 1}-${d.month.split('-')[1]}`)?.murders || 0,
+        month: monthNames[parseInt(d.month.split('-')[1]) - 1],
+        murders2025: d.murders,
+        murders2024: crimesData.find(m => m.month === `2024-${d.month.split('-')[1]}`)?.murders || 0,
       }))
       .map(d => ({
         ...d,
-        change: d.lastYear > 0 ? ((d.murders - d.lastYear) / d.lastYear * 100).toFixed(1) : '-',
+        change: d.murders2024 > 0 ? ((d.murders2025 - d.murders2024) / d.murders2024 * 100).toFixed(1) : '-',
       }));
-  }, [currentYear]);
+  }, []);
 
   const tableColumns = [
     { key: 'month', header: 'Month' },
-    { key: 'murders', header: `${currentYear}`, align: 'right' },
-    { key: 'lastYear', header: `${currentYear - 1}`, align: 'right' },
+    { key: 'murders2025', header: '2025', align: 'right' },
+    { key: 'murders2024', header: '2024', align: 'right' },
     {
       key: 'change',
       header: 'Change',
@@ -155,8 +158,8 @@ export default function Murders() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Murder Statistics</h1>
-        <p className="text-gray-500 mt-1 text-sm lg:text-base">Homicide trends and analysis for New Orleans</p>
+        <h1 className="text-xl lg:text-2xl font-bold text-navy-900">Crime Statistics</h1>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Crime trends and analysis for New Orleans</p>
       </div>
 
       {/* KPI Cards */}
@@ -246,8 +249,8 @@ export default function Murders() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Cumulative chart */}
         <ChartCard
-          title="Cumulative Total"
-          subtitle={`${currentYear} vs ${currentYear - 1} running total`}
+          title="Cumulative Murder Total"
+          subtitle="2025 vs 2024 running total"
         >
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={cumulativeData}>
@@ -265,8 +268,8 @@ export default function Murders() {
               <Legend />
               <Line
                 type="monotone"
-                dataKey="currentCumulative"
-                name={`${currentYear} YTD`}
+                dataKey="cumulative2025"
+                name="2025"
                 stroke={COLORS.coral}
                 strokeWidth={2.5}
                 dot={{ fill: COLORS.coral, r: 3 }}
@@ -274,8 +277,8 @@ export default function Murders() {
               />
               <Line
                 type="monotone"
-                dataKey="lastYearCumulative"
-                name={`${currentYear - 1} YTD`}
+                dataKey="cumulative2024"
+                name="2024"
                 stroke={COLORS.navy}
                 strokeWidth={2}
                 dot={{ fill: COLORS.navy, r: 2 }}
@@ -287,7 +290,7 @@ export default function Murders() {
         {/* Monthly comparison table */}
         <ChartCard
           title="Monthly Breakdown"
-          subtitle={`${currentYear} vs ${currentYear - 1} by month`}
+          subtitle="2025 vs 2024 murders by month"
         >
           <DataTable
             columns={tableColumns}
@@ -303,7 +306,7 @@ export default function Murders() {
           <div>
             <h3 className="font-semibold text-navy-900">10-Year Trend</h3>
             <p className="text-sm text-gray-500 mt-0.5">
-              {trendView === 'monthly' ? 'Monthly murder counts' : '12-month rolling average'}
+              {trendView === 'monthly' ? 'Monthly murder counts' : 'Average murders rolling over 12 months'}
             </p>
           </div>
           <div className="flex bg-warm-gray-100 rounded-lg p-1">
@@ -333,7 +336,7 @@ export default function Murders() {
           <ResponsiveContainer width="100%" height={300}>
             {trendView === 'monthly' ? (
               <BarChart data={longTermData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" vertical={false} />
                 <XAxis
                   dataKey="month"
                   tickFormatter={(val) => {
@@ -341,8 +344,9 @@ export default function Murders() {
                     return month === '01' ? year : '';
                   }}
                   tick={{ fontSize: 10, fill: '#6B7280' }}
-                  interval={11}
-                  label={{ value: 'Year', position: 'insideBottom', offset: -5, style: { fontSize: 11, fill: '#6B7280' } }}
+                  interval={0}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis
                   tick={{ fontSize: 11, fill: '#6B7280' }}

@@ -17,10 +17,10 @@ import {
 
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Overview', end: true },
-  { to: '/murders', icon: AlertTriangle, label: 'Murders' },
+  { to: '/crime', icon: AlertTriangle, label: 'Crime' },
   { to: '/response-times', icon: Timer, label: 'Response Times' },
-  { to: '/311', icon: Construction, label: '311 / Potholes' },
-  { to: '/economy', icon: TrendingUp, label: 'Economy' },
+  { to: '/311', icon: Construction, label: '311 Services' },
+  { to: '/economy', icon: TrendingUp, label: 'Economy & Demographics' },
 ];
 
 export default function Dashboard() {

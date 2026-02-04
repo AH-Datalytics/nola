@@ -10,8 +10,8 @@ const rootDir = path.join(__dirname, '..', '..');
 
 console.log('🔄 Converting data files...');
 
-// Convert Murders Excel
-console.log('📊 Processing murders data...');
+// Convert Murders Excel (outputs to crimes.json for the Crime section)
+console.log('📊 Processing crime data...');
 const murdersPath = path.join(rootDir, 'NOLA Murders by Month.xlsx');
 if (existsSync(murdersPath)) {
   const workbook = XLSX.readFile(murdersPath, { cellDates: true });
@@ -19,7 +19,7 @@ if (existsSync(murdersPath)) {
   const data = XLSX.utils.sheet_to_json(sheet, { raw: false, dateNF: 'yyyy-mm-dd' });
 
   // Filter to 2015+ for main use, but keep all for historical context
-  const murdersData = data
+  const crimesData = data
     .filter(row => row.Month && row.Murders !== undefined && row.Murders !== null)
     .map(row => {
       // Parse the date string - it should be in YYYY-MM-DD format now
@@ -34,12 +34,12 @@ if (existsSync(murdersPath)) {
     .filter(row => row.month && row.month >= '2015-01' && !isNaN(row.murders));
 
   writeFileSync(
-    path.join(dataDir, 'murders.json'),
-    JSON.stringify(murdersData, null, 2)
+    path.join(dataDir, 'crimes.json'),
+    JSON.stringify(crimesData, null, 2)
   );
-  console.log(`   ✓ Processed ${murdersData.length} months of murder data`);
+  console.log(`   ✓ Processed ${crimesData.length} months of crime data`);
 } else {
-  console.log('   ⚠ Murders file not found');
+  console.log('   ⚠ Crime data file not found');
 }
 
 // Convert Unemployment CSV
@@ -121,14 +121,36 @@ const homePricesPath = path.join(rootDir, 'home_prices.csv');
 if (existsSync(homePricesPath)) {
   const csvContent = readFileSync(homePricesPath, 'utf-8');
   const lines = csvContent.trim().split('\n');
+  const headers = lines[0].split(',');
+
+  // Find column indices by name (handles quoted fields issue)
+  const medianPriceIdx = headers.indexOf('median_listing_price');
+  const avgPriceIdx = headers.indexOf('average_listing_price');
+
   const homePricesData = lines.slice(1)
     .map(line => {
-      const parts = line.split(',');
+      // Parse CSV properly handling quoted fields
+      const parts = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          parts.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      parts.push(current);
+
       const monthRaw = parts[0]; // YYYYMM format
       const year = monthRaw.slice(0, 4);
       const month = monthRaw.slice(4, 6);
-      const medianPrice = parseFloat(parts[3]) || null;
-      const avgPrice = parseFloat(parts[36]) || null;
+      const medianPrice = parseFloat(parts[medianPriceIdx]) || null;
+      const avgPrice = parseFloat(parts[avgPriceIdx]) || null;
       return {
         month: `${year}-${month}`,
         medianPrice,
@@ -259,6 +281,34 @@ if (existsSync(responseTimeCsvPath)) {
   console.log(`   ✓ Processed ${monthly.length} months of response time data (${totalIncidents.toLocaleString()} total incidents)`);
 } else {
   console.log('   ⚠ Response time CSV not found');
+}
+
+// Convert Population CSV (from FRED LAORLE0POP or similar)
+console.log('📊 Processing population data...');
+const populationPath = path.join(rootDir, 'population.csv');
+if (existsSync(populationPath)) {
+  const csvContent = readFileSync(populationPath, 'utf-8');
+  const lines = csvContent.trim().split('\n');
+  const populationData = lines.slice(1)
+    .map(line => {
+      const [date, population] = line.split(',');
+      const year = parseInt(date.slice(0, 4));
+      // FRED data is in thousands, so multiply by 1000
+      return {
+        year,
+        population: Math.round(parseFloat(population) * 1000) || null
+      };
+    })
+    .filter(row => row.year >= 2010 && row.population)
+    .sort((a, b) => a.year - b.year);
+
+  writeFileSync(
+    path.join(dataDir, 'population.json'),
+    JSON.stringify(populationData, null, 2)
+  );
+  console.log(`   ✓ Processed ${populationData.length} years of population data`);
+} else {
+  console.log('   ⚠ Population file not found');
 }
 
 console.log('✅ Data conversion complete!');
