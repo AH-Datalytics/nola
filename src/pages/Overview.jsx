@@ -224,12 +224,17 @@ export default function Overview() {
             <ResponsiveContainer width="100%" height={280}>
               {crimesView === 'monthly' ? (
                 <BarChart data={last24Months}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" vertical={false} />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={formatMonth}
-                    tick={{ fontSize: 11, fill: '#6B7280' }}
-                    interval="preserveStartEnd"
+                    tickFormatter={(val) => {
+                      const [year, month] = val.split('-');
+                      return month === '01' ? year : '';
+                    }}
+                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    interval={0}
+                    tickLine={false}
+                    axisLine={false}
                   />
                   <YAxis
                     tick={{ fontSize: 11, fill: '#6B7280' }}
@@ -252,9 +257,13 @@ export default function Overview() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
                   <XAxis
                     dataKey="month"
-                    tickFormatter={formatMonth}
-                    tick={{ fontSize: 11, fill: '#6B7280' }}
-                    interval="preserveStartEnd"
+                    tickFormatter={(val) => {
+                      const [year, month] = val.split('-');
+                      return month === '01' ? year : '';
+                    }}
+                    tick={{ fontSize: 10, fill: '#6B7280' }}
+                    interval={0}
+                    tickLine={false}
                   />
                   <YAxis
                     tick={{ fontSize: 11, fill: '#6B7280' }}
@@ -273,6 +282,7 @@ export default function Overview() {
                     strokeWidth={2.5}
                     dot={false}
                     activeDot={{ r: 4, fill: COLORS.coral }}
+                    animationDuration={500}
                   />
                 </LineChart>
               )}
@@ -287,9 +297,13 @@ export default function Overview() {
               <CartesianGrid strokeDasharray="3 3" stroke="#E0E0D8" />
               <XAxis
                 dataKey="month"
-                tickFormatter={formatMonth}
-                tick={{ fontSize: 11, fill: '#6B7280' }}
-                interval="preserveStartEnd"
+                tickFormatter={(val) => {
+                  const [year, month] = val.split('-');
+                  return month === '01' ? year : '';
+                }}
+                tick={{ fontSize: 10, fill: '#6B7280' }}
+                interval={0}
+                tickLine={false}
               />
               <YAxis
                 tick={{ fontSize: 11, fill: '#6B7280' }}
@@ -308,6 +322,7 @@ export default function Overview() {
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4, fill: COLORS.navy }}
+                animationDuration={500}
               />
             </LineChart>
           </ResponsiveContainer>
