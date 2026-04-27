@@ -101,11 +101,6 @@ export default function Dashboard() {
         <div className="p-4 border-b border-navy-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-6 h-6 text-navy-900" fill="currentColor">
-                  <path d="M50 5 C50 5 45 15 45 25 C45 35 50 40 50 40 C50 40 55 35 55 25 C55 15 50 5 50 5 Z M30 35 C20 35 10 45 10 55 C10 65 20 70 30 70 C35 70 40 68 43 65 C40 60 38 55 38 50 C38 45 40 40 43 35 C40 33 35 35 30 35 Z M70 35 C65 35 60 33 57 35 C60 40 62 45 62 50 C62 55 60 60 57 65 C60 68 65 70 70 70 C80 70 90 65 90 55 C90 45 80 35 70 35 Z M50 45 C45 45 40 50 40 60 C40 70 45 95 50 95 C55 95 60 70 60 60 C60 50 55 45 50 45 Z" />
-                </svg>
-              </div>
               <div>
                 <div className="font-semibold text-sm">New Orleans</div>
                 <div className="text-xs text-gold-400">Mayor's Office</div>
